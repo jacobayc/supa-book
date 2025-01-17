@@ -1,18 +1,18 @@
 <template>
   <div class="main-list">
     <div class="info">
-      <p v-if="user"> <b>Welcome</b> <span>{{ user.email }}</span></p>
+      <p v-if="user"> <b>Welcome</b> <span>{{ user.name }}</span></p>
     </div>
     <div v-if="bookStore.error">Error: {{ bookStore.error.message }}</div>
     <ul v-if="bookStore.books.length" class="book-list">
       <li v-for="(book, index) in bookStore.books" :key="book.id" :class="{ 'new-book': index === 0 }" class="book-item" @click="handleBookClick(book)">
         <p class="book-index">{{ bookStore.books.length - 1 - index }}</p>
         <p class="book-title">{{ book.title }}</p>
-        <p class="book-email">{{ book.email == user?.email ? '내가 작성한 글' : book.email }}</p>
+        <p class="book-email">{{ book.name == user?.name ? `${book.name} (내 글)` : book.name }}</p>
         <p class="book-count">{{ book.count_num }}</p>
         <p class="book-created-at">{{ book.formattedCreatedAt ? book.formattedCreatedAt : 'just completed it' }}</p>
         <b class="new-badge" v-show = "index == 0"></b>
-        <button v-show="showTrashBin" @click.stop="deleteBook(book.id, book.email)">Delete</button>
+        <button v-show="showTrashBin" @click.stop="deleteBook(book.id, book.email)"></button>
       </li>
     </ul>
     <p class="empty" v-else-if="!bookStore.loading && !bookStore.error">No books found.</p>
@@ -37,7 +37,7 @@ const router = useRouter();
 const authStore = useAuthStore();
 const bookStore = useBookStore();
 const user = ref(null);
-const newBook = ref({ title: '', text: '', email:'' });
+const newBook = ref({ title: '', text: '', email:'', name: '' });
 const showModal = ref(false);
 const showTrashBin = ref(false);
 
@@ -45,6 +45,7 @@ onMounted(async () => {
   await authStore.checkSession();
   user.value = authStore.user; 
   newBook.value.email = authStore.user.email
+  newBook.value.name = authStore.user.name
   bookStore.fetchBooks();
 });
 
@@ -123,7 +124,7 @@ const deleteBook = async (bookId, bookEmail) => {
 .main-list {
   position: relative;
   width: 100%;
-  padding: 40px 0;
+  padding: 90px 0;
 }
 
 .info {
@@ -155,6 +156,18 @@ const deleteBook = async (bookId, bookEmail) => {
   cursor: pointer; /* Make items clickable (optional) */
 }
 
+.book-item button {
+  transform:translateX(10px);
+  cursor: pointer;
+  width: 25px;
+  height: 25px;
+  background-color: transparent;
+  border: none;
+  background-image: url('@/assets/trashbin.png');
+  background-size: contain; 
+  background-repeat: no-repeat; 
+}
+
 .book-item p { /* Styles for paragraphs within list items */
   margin: 0 3px; /* Add some space between paragraphs */
 }
@@ -181,14 +194,16 @@ const deleteBook = async (bookId, bookEmail) => {
 }
 
 .book-index {
+  color: #888;
   width: 2%; 
   font-size: 12px;
-  text-align: left;
+  text-align: center;
 }
 .book-count {
   width: 2%; 
   font-size: 12px;
-  text-align: right;
+  text-align: center;
+  color: rgb(170, 73, 170);
 }
 
 .book-title {
@@ -241,6 +256,7 @@ const deleteBook = async (bookId, bookEmail) => {
   border: none;
   color: white;
   border-radius: 10px;
+  cursor: pointer;
 }
 
 .write-button {

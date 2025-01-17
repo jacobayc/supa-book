@@ -2,7 +2,7 @@
   <div class="detailPage">
     <button class="back-button" @click="goBack">Back</button>
     <div class="contents">
-      <h1> {{ data.title }}</h1>
+      <h1> " {{ data.title }} "</h1>
       <h3> <pre>{{ data.text }}</pre></h3>
     </div>
   </div>
@@ -41,12 +41,13 @@ const goBack = () => {
 }
 
 pre {
-  line-height: 1;
+  width: 100%;
+  white-space: pre-wrap;
+  line-height: 1.2;
 }
 
 h1 {
   text-align: center;
-  text-decoration: underline;
   padding-bottom: 20px;
   color: salmon;
 }

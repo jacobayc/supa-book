@@ -30,6 +30,5 @@ onMounted(async () => {
 
 main {
   flex-grow: 1; /* main 콘텐츠가 남은 공간을 채우도록 설정 */
-  padding-top: 50px;
 }
 </style>

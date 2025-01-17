@@ -5,7 +5,7 @@
       <button :class="{ active: !isLoginFormVisible }" @click="showSignUpForm">회원가입</button>
     </div>
 
-    <div v-if="!showWelcomeMessage" class="form-container">
+    <div class="form-container">
       <div v-if="isLoginFormVisible">
         <input type="email" v-model="email" placeholder="이메일" class="input-field" />
         <input type="password" v-model="password" placeholder="비밀번호" class="input-field" />
@@ -18,15 +18,16 @@
         <button @click="signUp" class="submit-button">가입하기</button>
       </div>
     </div>
-    <div v-else class = "welcome-message">
+    <div class="welcome-message">
         <h1>
-          book
+          
         </h1>
     </div>
-    
     <div v-if="error" class="error-message">
       {{ error }}
     </div>
+    <div class="main-bg"></div>
+    <div class="gradient"></div>
   </div>
 </template>
 
@@ -42,16 +43,13 @@ const password = ref('');
 const name = ref('');
 const error = ref(null);
 const isLoginFormVisible = ref(true); // 로그인 폼이 기본으로 보이도록 설정
-const showWelcomeMessage = ref(true);
 
 const showLoginForm = () => {
     isLoginFormVisible.value = true;
-    showWelcomeMessage.value = false;
 };
 
 const showSignUpForm = () => {
     isLoginFormVisible.value = false;
-    showWelcomeMessage.value = false;
 };
 
 const signIn = async () => {
@@ -79,10 +77,11 @@ const signUp = async () => {
 
 <style scoped>
 .container {
+  width: 100%;
+  max-width: 1920px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 20px;
   min-height: 300px;
   position: relative; /* 탭 컨테이너의 기준 위치 설정 */
 }
@@ -90,8 +89,9 @@ const signUp = async () => {
 .tab-container {
   display: flex;
   position: fixed; /* 절대 위치 설정 */
-  top: 30px; /* 상단 여백 */
-  right: 30px; /* 우측 여백 */
+  z-index: 9999;
+  top: 20px; /* 상단 여백 */
+  right: 10px; /* 우측 여백 */
 }
 
 button {
@@ -111,11 +111,23 @@ button.active {
 }
 
 .form-container {
+  z-index: 9999;
+  transform: translateY(210px);
   position: relative;
   min-height: 250px;
   display: flex;
   flex-direction: column;
   width: 300px; /* 폼 너비 조정 */
+}
+
+.welcome-message {
+  width: 100%;
+  max-width: 1200px;
+  position: absolute;
+  top: 100px;
+  left: 50%;
+  transform:translateX(-50%);
+  text-align: center;
 }
 
 .input-field {
@@ -145,11 +157,35 @@ button.active {
 }
 
 .submit-button:hover {
-    filter: brightness(1.1);
+  filter: brightness(1.1);
 }
 
 .error-message {
   color: red;
   margin-top: 10px;
+}
+
+.main-bg {
+  width: 100%;
+  height: 100vh;
+  z-index:1;
+  position: absolute;
+  left:0;
+  top:0;
+  background-image: url('@/assets/nature.jpg');
+  background-repeat: no-repeat; 
+  background-position: center;
+}
+
+
+.gradient {
+  width: 100%;
+  height: 100vh;
+  z-index:-1;
+  position: absolute;
+  left:0;
+  top:0;
+  background-image: url('@/assets/gradient.png');
+  background-repeat: no-repeat; 
 }
 </style>
