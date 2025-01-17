@@ -14,7 +14,7 @@ import { useRouter } from 'vue-router';
 
 const props = defineProps({
   data: {
-    type: String,
+    type: Object,
     required: true,
   },
 });
@@ -29,8 +29,7 @@ const goBack = () => {
 <style scoped>
 .detailPage {
   width: 100%;
-  position: fixed; /* 상대 위치 설정 */
-  top: 40px;
+  height: 1000px;
 }
 
 .contents {
@@ -45,13 +44,14 @@ h1 {
   text-align: center;
   text-decoration: underline;
   padding-bottom: 20px;
+  color: salmon;
 }
 
 .back-button {
   position: absolute; /* 절대 위치 설정 */
-  top: 10px;
-  right: 20px;
-  padding: 8px 16px;
+  top: 15px;
+  right: 10px;
+  padding: 4px 8px;
   background-color: #42b983; /* Vue green */
   color: white;
   border: none;

@@ -26,11 +26,10 @@ onMounted(async () => {
 .app-container {
   display: flex;
   flex-direction: column; /* main 콘텐츠가 header 아래에 배치되도록 설정 */
-  min-height: 100vh; /* 화면 높이만큼 최소 높이 설정 */
 }
 
 main {
   flex-grow: 1; /* main 콘텐츠가 남은 공간을 채우도록 설정 */
-  padding-top: 68px;
+  padding-top: 50px;
 }
 </style>

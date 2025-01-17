@@ -42,7 +42,7 @@ const logout = async () => {
 <style scoped>
 .header {
   background-color: #f0f0f0;
-  padding: 10px 20px;
+  padding: 0px 10px;
   border-bottom: 1px solid #ddd;
   position: fixed;
   top: 0;

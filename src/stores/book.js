@@ -15,14 +15,21 @@ export const useBookStore = defineStore('book', {
                 const { data, error } = await supabase
                     .from('books') // 테이블 명시적으로 지정
                     .select('*')
-                    .order('created_at', { ascending: false }); // 최신글이 위로
+                    .order('created_at', { ascending: false });
 
                 if (error) {
                     throw error;
                 }
                 this.books = data.map(book => {
                   const createdAt = new Date(book.created_at);
-                  const formattedCreatedAt = `${createdAt.getFullYear()}.${String(createdAt.getMonth() + 1).padStart(2, '0')}.${String(createdAt.getDate()).padStart(2, '0')}.${String(createdAt.getHours()).padStart(2, '0')}.${String(createdAt.getMinutes()).padStart(2, '0')}`;
+                  const year = createdAt.getFullYear();
+                  const month = String(createdAt.getMonth() + 1).padStart(2, '0'); // 월은 0부터 시작하므로 1을 더함
+                  const day = String(createdAt.getDate()).padStart(2, '0');
+                  const hours = String(createdAt.getHours()).padStart(2, '0');
+                  const minutes = String(createdAt.getMinutes()).padStart(2, '0');
+
+                  const formattedCreatedAt = `${year}.${month}.${day}.${hours}.${minutes}`;
+                  
                   return { ...book, formattedCreatedAt };
               }) || []; // data가 null일 경우 빈 배열 할당
             } catch (error) {
