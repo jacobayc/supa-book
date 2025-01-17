@@ -243,7 +243,7 @@ const deleteBook = async (bookId, bookEmail) => {
 .tools {
   display: flex;
   position: absolute;
-  top: 10px;
+  top: 58px;
   right: 10px;
   width: 100px;
   justify-content: space-between;

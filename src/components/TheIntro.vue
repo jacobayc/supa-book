@@ -95,10 +95,10 @@ const signUp = async () => {
 }
 
 button {
-  padding: 10px 20px;
+  padding: 8px 10px;
   border: none;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 12px;
   margin: 0 5px;
   border-radius: 5px;
   transition: background-color 0.3s ease; /* 부드러운 전환 효과 */
@@ -112,7 +112,7 @@ button.active {
 
 .form-container {
   z-index: 9999;
-  transform: translateY(210px);
+  transform: translateY(250px);
   position: relative;
   min-height: 250px;
   display: flex;
