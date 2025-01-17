@@ -129,7 +129,7 @@ const deleteBook = async (bookId, bookEmail) => {
 .info {
   width: fit-content;
   height: 40px;
-  transform:translateY(-20px);
+  transform:translateY(-5px);
   margin: 0 auto;
 }
 
@@ -213,6 +213,9 @@ const deleteBook = async (bookId, bookEmail) => {
   width: 10%;
   font-size: 12px;
   text-align: right;
+  overflow: hidden; /* 내용이 넘칠 경우 숨김 */
+  text-overflow: ellipsis; /* 말줄임표(...) 표시 */
+  white-space: nowrap; /* 줄바꿈 방지 */
 }
 
 .empty {
@@ -227,16 +230,17 @@ const deleteBook = async (bookId, bookEmail) => {
   position: absolute;
   top: 10px;
   right: 10px;
-  width: 105px;
+  width: 100px;
   justify-content: space-between;
 }
 
 .tools button {
-  height: 30px;
-  min-width: 50px;
+  height: 24px;
+  min-width: 46px;
   outline: none;
   border: none;
   color: white;
+  border-radius: 10px;
 }
 
 .write-button {
