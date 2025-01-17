@@ -1,24 +1,32 @@
 <template>
   <div class="app-container">
-    <TheHeader v-if="authStore.isLoggedIn" />
-    <main>
-      <TheIntro v-if="!authStore.isLoggedIn" />
-      <TheWelcome v-if="authStore.isLoggedIn" />
-    </main>
+    <div v-if="isLoading"></div>
+    <template v-else>
+      <TheHeader v-if="authStore.isLoggedIn" />
+      <main>
+        <TheIntro v-if="!authStore.isLoggedIn" />
+        <TheWelcome v-if="authStore.isLoggedIn" />
+      </main>
+    </template>
   </div>
 </template>
 
 <script setup>
-import { onMounted } from 'vue';
+import { onMounted, ref } from 'vue';
 import TheIntro from '../components/TheIntro.vue';
 import TheWelcome from '../components/TheWelcome.vue';
 import TheHeader from '../components/Header.vue';
 import { useAuthStore } from '../stores/auth';
 
 const authStore = useAuthStore();
+const isLoading = ref(true); // 로딩 상태 추가
 
 onMounted(async () => {
-  await authStore.checkSession();
+  try {
+    await authStore.checkSession();
+  } finally {
+    isLoading.value = false;
+  }
 });
 </script>
 

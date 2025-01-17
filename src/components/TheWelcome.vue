@@ -21,7 +21,7 @@
       <button class="delete-button" @click="showTrashBin = !showTrashBin">Delete</button>
     </div>
     <modal :newBook="newBook" :open="showModal" @save="saveBook" @close="showModal = false"></modal>
-    <div style="font-size: 100px; color: #222; position: fixed; left: 50%; top: 50%; transform: translate(-50%);" v-if="bookStore.loading">Loading...</div>
+    <div style="font-size: 10vw; color: #222; position: fixed; left: 50%; top: 50%; transform: translate(-50%);" v-if="bookStore.loading">Loading...</div>
   </div>
 </template>
 
@@ -154,12 +154,15 @@ const deleteBook = async (bookId, bookEmail) => {
   padding: 10px 0px; /* Add some padding */
   outline: 1px solid rgba(250,128,114, .3); 
   cursor: pointer; /* Make items clickable (optional) */
+  position: relative;
 }
 
 .book-item button {
-  transform:translateX(10px);
+  position: absolute;
+  right: 10px;
+  top: 13px;
   cursor: pointer;
-  width: 25px;
+  width: 10px;
   height: 25px;
   background-color: transparent;
   border: none;
@@ -284,7 +287,7 @@ const deleteBook = async (bookId, bookEmail) => {
     margin: 0 4px;
   }
   .book-index, .book-count {
-    width: 2%; 
+    width: 3%; 
   }
   .book-title {
     font-size: 14px;
@@ -295,7 +298,7 @@ const deleteBook = async (bookId, bookEmail) => {
     width: 20%;
   }
   .book-created-at {
-    width: 20%;
+    width: 15%;
   }
 }
 </style>
