@@ -181,7 +181,7 @@ button.active {
 .gradient {
   width: 100%;
   height: 100vh;
-  z-index:-1;
+  z-index:10;
   position: absolute;
   left:0;
   top:0;
