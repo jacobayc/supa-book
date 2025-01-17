@@ -3,7 +3,7 @@
     <button class="back-button" @click="goBack">Back</button>
     <div class="contents">
       <h1> {{ data.title }}</h1>
-      <h3> {{ data.text }}</h3>
+      <h3> <pre>{{ data.text }}</pre></h3>
     </div>
   </div>
 </template>
@@ -38,6 +38,10 @@ const goBack = () => {
   margin: 0 auto;
   padding: 20px;
   box-sizing: border-box;
+}
+
+pre {
+  line-height: 1;
 }
 
 h1 {
