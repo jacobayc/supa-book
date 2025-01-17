@@ -3,7 +3,7 @@
 <template>
   <div v-if="open" class="modal">
     <input type="text" v-model="newBook.title" placeholder="title"/>
-    <textarea v-model="newBook.text" placeholder="text" rows="15"/>
+    <textarea v-model="newBook.text" placeholder="text"/>
     <button @click="saveBook">save</button>
     <button @click="closeModal">close</button>
   </div>
@@ -34,6 +34,7 @@ const saveBook = () => {
 
 <style scoped>
 .modal {
+  width: 90vw !important;
   position: fixed; /* Make modal fixed on screen */
   top: 50%;
   left: 50%;
@@ -52,11 +53,46 @@ const saveBook = () => {
 .modal input,
 .modal textarea,
 .modal button {
-  resize: none;
+  /* resize: none; */
   padding: 10px;
   margin-bottom: 10px;
   border: 1px solid #ddd;
   border-radius: 3px;
   width: 100%; /* Make inputs and buttons full width */
+}
+.modal textarea {
+  height: 30vw;
+}
+
+@media (max-width: 1199px) {
+  .modal {
+  position: fixed; /* Make modal fixed on screen */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); /* Center the modal */
+  background-color: #fff; /* White background */
+  border: 1px solid #ddd; /* Light border */
+  border-radius: 5px; /* Rounded corners */
+  padding: 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  width: 400px; /* Set modal width */
+
+  /* Pink and purple gradient */
+  background-image: linear-gradient(to right, #f7cac9, #e5b7b5);
+}
+
+.modal input,
+.modal textarea,
+.modal button {
+  /* resize: none; */
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  width: 100%; /* Make inputs and buttons full width */
+}
+.modal textarea {
+  height: 50vw;
+}
 }
 </style>

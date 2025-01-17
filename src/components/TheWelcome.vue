@@ -44,7 +44,7 @@ const showTrashBin = ref(false);
 onMounted(async () => {
   await authStore.checkSession();
   user.value = authStore.user; 
-  newBook.value.email = authStore.user.email
+  newBook.value.email = authStore.user?.email
   newBook.value.name = authStore.user.name
   bookStore.fetchBooks();
 });

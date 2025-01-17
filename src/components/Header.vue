@@ -29,7 +29,6 @@ const toggleMenu = () => {
 
 const logout = async () => {
   await authStore.logout();
-  router.push('/');
   isMenuOpen.value = false; // 로그아웃 후 메뉴 닫기
 };
 
