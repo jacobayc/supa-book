@@ -9,11 +9,14 @@ export const useAuthStore = defineStore('auth', {
     user: null, // 추가: 사용자 정보 저장
   }),
   actions: {
+    // 세션 체크
     async checkSession() {
       const { data: { session } } = await supabase.auth.getSession();
       this.isLoggedIn = !!session; // 세션이 있으면 true, 없으면 false
       this.user = session?.user.user_metadata || null; // 사용자 정보 저장
     },
+
+    //로그인
     async signInWithEmail(email, password) {
       try {
         const { data, error } = await supabase.auth.signInWithPassword({ email, password });
@@ -28,6 +31,7 @@ export const useAuthStore = defineStore('auth', {
         throw error; // 오류를 다시 던져 컴포넌트에서 처리하도록 함
       }
     },
+    // 회원가입
     async signUpWithEmail(email, password, name) {
         try {
             const { data, error } = await supabase.auth.signUp({ 
@@ -47,6 +51,33 @@ export const useAuthStore = defineStore('auth', {
             throw error; // 오류를 다시 던져 컴포넌트에서 처리하도록 함
           }
     },
+
+    // 업데이트 프로필 
+    async updateUserNickname(newNickname) {
+      try {
+        // 현재 사용자의 메타데이터 업데이트
+        const { data, error } = await supabase.auth.updateUser({
+          data: { 
+            name: newNickname 
+          }
+        });
+    
+        if (error) {
+          throw error;
+        }
+    
+        // 로컬 상태도 업데이트
+        this.user = newNickname;
+
+        // 성공 알림
+        alert('닉네임이 성공적으로 변경되었습니다.');
+      } catch (error) {
+        console.error('닉네임 변경 오류:', error);
+        alert('닉네임 변경 중 오류가 발생했습니다.');
+      }
+    },
+    
+    // 로그아웃
     async logout() {
       try {
         const { error } = await supabase.auth.signOut();
