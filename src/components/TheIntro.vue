@@ -144,7 +144,7 @@ button.active {
   width: 100%;
   margin: 0 auto;
   position: absolute;
-  bottom: 0;
+  bottom: 55px;
   left: 0;
   background-image: linear-gradient(to right, #800080, #FF69B4); /* 제출 버튼 그라데이션 */
   color: white;

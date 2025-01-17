@@ -48,7 +48,7 @@ pre {
 
 h1 {
   text-align: center;
-  padding-bottom: 20px;
+  padding: 40px 0px;
   color: salmon;
 }
 
