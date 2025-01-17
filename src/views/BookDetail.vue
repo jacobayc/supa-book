@@ -63,4 +63,16 @@ h1 {
 .back-button:hover {
   background-color: #35936a;
 }
+
+@media (max-width: 1199px) { /* 1200px 미만 */
+  h1 {
+    font-size: 20px;
+    overflow: hidden; /* 내용이 넘칠 경우 숨김 */
+    text-overflow: ellipsis; /* 말줄임표(...) 표시 */
+    white-space: nowrap; /* 줄바꿈 방지 */
+  }
+  .contents {
+    font-size: 13px;
+  }
+}
 </style>
