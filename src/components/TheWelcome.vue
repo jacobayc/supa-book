@@ -4,6 +4,10 @@
       <p v-if="user"> <b>Welcome</b> <span>{{ user.name }}</span></p>
     </div>
     <div v-if="bookStore.error">Error: {{ bookStore.error.message }}</div>
+    <div class="tools">
+      <button class="write-button" @click="showModal = !showModal">Write</button>
+      <button class="delete-button" @click="showTrashBin = !showTrashBin">Delete</button>
+    </div>
     <ul v-if="bookStore.books.length" class="book-list">
       <li v-for="(book, index) in bookStore.books" :key="book.id" :class="{ 'new-book': index === 0 }" class="book-item" @click="handleBookClick(book)">
         <p class="book-index">{{ bookStore.books.length - 1 - index }}</p>
@@ -16,10 +20,6 @@
       </li>
     </ul>
     <p class="empty" v-else-if="!bookStore.loading && !bookStore.error">No books found.</p>
-    <div class="tools">
-      <button class="write-button" @click="showModal = !showModal">Write</button>
-      <button class="delete-button" @click="showTrashBin = !showTrashBin">Delete</button>
-    </div>
     <modal :newBook="newBook" :open="showModal" @save="saveBook" @close="showModal = false"></modal>
     <div style="font-size: 10vw; color: #222; position: fixed; left: 50%; top: 50%; transform: translate(-50%);" v-if="bookStore.loading">Loading...</div>
   </div>
@@ -255,16 +255,20 @@ const deleteBook = async (bookId, bookEmail) => {
 }
 
 .tools {
-  display: flex;
-  position: absolute;
-  top: 58px;
-  right: 10px;
-  width: 100px;
-  justify-content: space-between;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  text-align: right;
+  /* display: flex; */
+  /* position: absolute; */
+  /* top: 58px; */
+  /* right: 10px; */
+  /* justify-content: space-between; */
 }
 
 .tools button {
   height: 24px;
+  margin: 0 3px;
   min-width: 46px;
   outline: none;
   border: none;
@@ -289,6 +293,10 @@ const deleteBook = async (bookId, bookEmail) => {
 
 
 @media (max-width: 1199px) { /* 1200px 미만 */
+  .tools {
+    width: 90%;
+  }
+  
   .book-item {
     width: 90%;
   }
