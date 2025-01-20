@@ -43,6 +43,7 @@
 import { ref } from 'vue';
 import { useAuthStore } from '../stores/auth';
 import { useRouter } from 'vue-router';
+import emitter from '../utils/eventBus'
 
 const router = useRouter();
 const authStore = useAuthStore();
@@ -74,7 +75,9 @@ const updateNickname = async () => {
 
   try {
     await authStore.updateUserNickname(newNickname.value.trim());
-    router.push('/')
+  
+    // 세션 갱신 이벤트 발행
+    emitter.emit('session-updated')
     closeProfileModal();
   } catch (error) {
     console.error('닉네임 변경 실패', error);

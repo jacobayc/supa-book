@@ -43,6 +43,7 @@ const goBack = () => {
 pre {
   width: 100%;
   white-space: pre-wrap;
+  word-break: break-all;
   line-height: 1.2;
 }
 

@@ -8,7 +8,7 @@
       <li v-for="(book, index) in bookStore.books" :key="book.id" :class="{ 'new-book': index === 0 }" class="book-item" @click="handleBookClick(book)">
         <p class="book-index">{{ bookStore.books.length - 1 - index }}</p>
         <p class="book-title">{{ book.title }}</p>
-        <p class="book-email">{{ book.name == user?.name ? `${book.name} (내 글)` : book.name }}</p>
+        <p class="book-email">{{ book.email == user?.email ? `${book.name} (내 글)` : book.name }}</p>
         <p class="book-count">{{ book.count_num }}</p>
         <p class="book-created-at">{{ book.formattedCreatedAt ? book.formattedCreatedAt : 'just completed it' }}</p>
         <b class="new-badge" v-show = "index == 0"></b>
@@ -26,11 +26,12 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import { useAuthStore } from '../stores/auth';
 import { useBookStore } from '../stores/book';
 import { useRouter } from 'vue-router';
 import { supabase } from '../utils/supabaseClient';
+import emitter from '../utils/eventBus'
 import Modal from '../components/Modal.vue'; 
 
 const router = useRouter();
@@ -47,8 +48,16 @@ onMounted(async () => {
   newBook.value.email = authStore.user?.email
   newBook.value.name = authStore.user.name
   bookStore.fetchBooks();
+  emitter.on('session-updated', async () => {
+    await authStore.checkSession()
+    user.value = authStore.user
+  })
 });
 
+onUnmounted(() => {
+  // 이벤트 리스너 제거
+  emitter.off('session-updated')
+})
 
 
 const handleBookClick = async (book) => {
@@ -132,10 +141,12 @@ const deleteBook = async (bookId, bookEmail) => {
   height: 40px;
   transform:translateY(-5px);
   margin: 0 auto;
+  font-size: 12px;
 }
 
 .info p span {
   color: salmon;
+  font-size: 16px;
 }
 
 .book-list { /* New class for the list */
