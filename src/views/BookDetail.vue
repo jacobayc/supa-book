@@ -1,35 +1,53 @@
 <template>
   <div class="detailPage">
     <button class="back-button" @click="goBack">Back</button>
-    <div class="contents">
-      <h1> " {{ data.title }} "</h1>
-      <h3> <pre>{{ data.text }}</pre></h3>
+    <!-- 조건부 렌더링 추가 -->
+    <div v-if="book" class="contents">
+      <h1>" {{ book.title }} "</h1>
+      <h3><pre>{{ book.text }}</pre></h3>
     </div>
+    <div v-else>Loading...</div>
   </div>
 </template>
 
 <script setup>
-import { defineProps } from 'vue';
-import { useRouter } from 'vue-router';
+import { defineProps, onMounted, ref } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
+import { useBookStore } from '../stores/book';
 
+const route = useRoute()
+const router = useRouter();
+const bookStore = useBookStore();
+const book = ref(null);
+
+// props로 쿼리 파라미터 직접 받기
 const props = defineProps({
-  data: {
-    type: Object,
-    required: true,
-  },
+  id: {
+    type: String,
+    default: null
+  }
+})
+
+onMounted(async () => {
+
+  // 현재 페이지 조회
+  const bookId = route.params?.id
+  // 현 페이지에 맞는 책 조회
+  await bookStore.fetchBookById(bookId);
+  book.value = bookStore.currentBook
 });
 
-const router = useRouter();
 
 const goBack = () => {
-  router.push('/'); // '/' 경로로 이동
+  router.push('/');
 };
 </script>
 
 <style scoped>
 .detailPage {
   width: 100%;
-  height: 1000px;
+  /* height: 1000px; */
+  padding-bottom: 100px;
 }
 
 .contents {

@@ -93,10 +93,7 @@ const handleBookClick = async (book) => {
       }
   }
 
-  router.push({
-    path: '/list',
-    query: { data: JSON.stringify(book) }, // Include text in query
-  });
+  router.push(`/list/${book.id}`);
 };
 
 const saveBook = async () => {

@@ -4,6 +4,7 @@ import { supabase } from '../utils/supabaseClient';
 export const useBookStore = defineStore('book', {
     state: () => ({
         books: [],
+        currentBook: null, // 현재 선택된 책 상태 추가
         loading: false, // 데이터 로딩 상태 추가
         error: null,    // 에러 상태 추가
     }),
@@ -39,6 +40,47 @@ export const useBookStore = defineStore('book', {
                 this.loading = false; // 로딩 완료
             }
         },
+
+        // 특정 ID의 책 조회 메서드 추가
+        async fetchBookById(bookId) {
+          this.loading = true;
+          this.error = null;
+            try {
+                const { data, error } = await supabase
+                    .from('books')
+                    .select('*')
+                    .eq('id', bookId)
+                    .single(); // 단일 레코드 반환
+
+                if (error) {
+                    throw error;
+                }
+
+                // 날짜 포맷팅 로직 추가
+                const createdAt = new Date(data.created_at);
+                const formattedCreatedAt = `${createdAt.getFullYear()}.${
+                    String(createdAt.getMonth() + 1).padStart(2, '0')
+                }.${String(createdAt.getDate()).padStart(2, '0')}.${
+                    String(createdAt.getHours()).padStart(2, '0')
+                }.${String(createdAt.getMinutes()).padStart(2, '0')}`;
+
+                this.currentBook = { 
+                    ...data, 
+                    formattedCreatedAt 
+                };
+
+                return this.currentBook;
+            } catch (error) {
+                console.error('Error fetching book:', error);
+                this.error = error;
+                return null;
+            } finally {
+                this.loading = false;
+            }
+          }
+        },
+
+        // book 저장
         async saveBook(newBook) {
             this.loading = true;
             this.error = null;
@@ -72,5 +114,4 @@ export const useBookStore = defineStore('book', {
                 this.loading = false;
             }
         }
-    },
 });
