@@ -83,10 +83,9 @@ export const useAuthStore = defineStore('auth', {
         const { error } = await supabase.auth.signOut();
         if (error) {
           console.error('로그아웃 오류:', error);
-          this.isLoggedIn = false
-          this.user = null;
-          this.router.push('/')
-          alert('로그아웃 중 오류가 발생했습니다.');
+          localStorage.removeItem('sb-bhkbhzhsvonyhgykonbs-auth-token');
+          alert('다른 곳에서 로그아웃 되었습니다.');
+          window.location.reload();
           return;
         }
     
@@ -110,8 +109,6 @@ export const useAuthStore = defineStore('auth', {
         }
       } catch (error) {
         console.error('로그아웃 중 예상치 못한 오류 발생:', error);
-        this.isLoggedIn = false
-        this.user = null;
         this.router.push('/')
         alert('로그아웃 중 예상치 못한 오류가 발생했습니다.');
       }
