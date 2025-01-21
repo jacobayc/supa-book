@@ -16,6 +16,7 @@ export const useBookStore = defineStore('book', {
         this.error = null;
         try {
             const { data, error } = await supabase.from('books').insert(newBook).select();
+            await supabase.from('logs').insert(newBook).select();
             if (error) {
                 throw error;
             }
