@@ -2,8 +2,8 @@
 
 <template>
   <div v-if="open" class="modal">
-    <input type="text" v-model="newBook.title" placeholder="title"/>
-    <textarea v-model="newBook.text" placeholder="text"/>
+    <input type="text" v-model="title" placeholder="title"/>
+    <textarea v-model="text" placeholder="text"/>
     <button @click="saveBook">save</button>
     <button @click="closeModal">close</button>
   </div>
@@ -11,24 +11,44 @@
 
 <script setup>
 
+import { ref } from 'vue';
+
+
 const props = defineProps({
   open: {
     type: Boolean,
     default: false,
   },
-  newBook : {
-    type: Object
-  }
+  // newBook : {
+  //   type: Object
+  // }
 });
 
-const emit = defineEmits(['close']);
+const title = ref('');
+const text = ref('');
+
+
+const emit = defineEmits(['close', 'save']);
 
 const closeModal = () => {
   emit('close');
 };
 
 const saveBook = () => {
-  emit('save');
+  // 제목과 내용이 비어있지 않은지 확인
+  if (title.value.trim() && text.value.trim()) {
+    emit('save', {
+      title: title.value,
+      text: text.value
+    });
+    
+    // 저장 후 입력 필드 초기화
+    title.value = '';
+    text.value = '';
+  } else {
+    // 선택적: 유효성 검사 실패 시 알림
+    alert('제목과 내용을 입력해주세요.');
+  }
 };
 </script>
 

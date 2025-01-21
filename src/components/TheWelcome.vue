@@ -20,7 +20,7 @@
       </li>
     </ul>
     <p class="empty" v-else-if="!bookStore.loading && !bookStore.error">No books found.</p>
-    <modal :newBook="newBook" :open="showModal" @save="saveBook" @close="showModal = false"></modal>
+    <modal  :open="showModal" @save="saveBookToStore" @close="showModal = false"></modal>
     <div style="font-size: 10vw; color: #222; position: fixed; left: 50%; top: 50%; transform: translate(-50%);" v-if="bookStore.loading">Loading...</div>
   </div>
 </template>
@@ -46,7 +46,7 @@ onMounted(async () => {
   await authStore.checkSession();
   user.value = authStore.user; 
   newBook.value.email = authStore.user?.email
-  newBook.value.name = authStore.user.name
+  newBook.value.name = authStore.user?.name
   bookStore.fetchBooks();
   emitter.on('session-updated', async () => {
     await authStore.checkSession()
@@ -96,10 +96,16 @@ const handleBookClick = async (book) => {
   router.push(`/list/${book.id}`);
 };
 
-const saveBook = async () => {
-  await bookStore.saveBook(newBook.value);
-  newBook.value = { title: '', text: ''};
-  showModal.value = false;
+const saveBookToStore  = async (bookData) => {
+  newBook.value = { ...newBook.value, ...bookData };
+  try {
+    await bookStore.saveBook(newBook.value);
+    newBook.value = { title: '', text: '', email: '', name: '' };
+    showModal.value = false;
+  } catch (error) {
+    console.error('책 저장 중 오류:', error);
+    alert('글 작성에 실패했습니다.')
+  }
 };
 
 const deleteBook = async (bookId, bookEmail) => {
