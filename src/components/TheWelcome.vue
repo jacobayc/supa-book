@@ -18,8 +18,8 @@
         <p class="book-created-at">{{ book.formattedCreatedAt ? book.formattedCreatedAt : 'just completed it' }}</p>
         <b class="new-badge" v-show = "index == 0"></b>
        
-        <button v-show="showTrashBin" class="book-delete-btn"  @click.stop="deleteBook(book.id, book.email)"></button>
-        <button v-show="isEditMode" class="book-edit-btn" @click.stop="editBook(book)">수정</button>
+        <button v-show="showTrashBin && book.email == user.email" class="book-delete-btn"  @click.stop="deleteBook(book.id, book.email)"></button>
+        <button v-show="isEditMode && book.email == user.email" class="book-edit-btn" @click.stop="editBook(book)">수정</button>
       </li>
     </ul>
     <p class="empty" v-else-if="!bookStore.loading && !bookStore.error">No books found.</p>
@@ -143,7 +143,7 @@ const deleteBook = async (bookId, bookEmail) => {
       return;
   }
   if (confirm('정말로 삭제하시겠습니까?')) { // confirm 메시지 한국어로 변경
-    if (bookEmail === user.value.email || 'jacobyc@spotv.net') { // bookEmail과 user.value.email 비교
+    if (bookEmail === user.value.email) { // bookEmail과 user.value.email 비교
       try {
           await bookStore.deleteBook(bookId);
           bookStore.books = bookStore.books.filter(book => book.id !== bookId);
