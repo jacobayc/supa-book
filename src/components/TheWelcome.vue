@@ -174,9 +174,9 @@ const deleteBook = async (bookId, bookEmail) => {
 .book-item button {
   position: absolute;
   right: 10px;
-  top: 13px;
+  top: 10px;
   cursor: pointer;
-  width: 10px;
+  width: 17px;
   height: 25px;
   background-color: transparent;
   border: none;
