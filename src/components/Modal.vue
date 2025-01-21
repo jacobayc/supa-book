@@ -2,27 +2,48 @@
 
 <template>
   <div v-if="open" class="modal">
-    <input type="text" v-model="title" placeholder="title"/>
-    <textarea v-model="text" placeholder="text"/>
-    <button @click="saveBook">save</button>
+    <strong style="color: hotpink;">{{isEditMode ? 'Edit mode' : ''}}</strong>
+    <input type="text" v-model="title" :placeholder="initialTitle || title"/>
+    <textarea v-model="text" :placeholder="initialText || text"/>
+    <button @click="saveBook">{{isEditMode ? 'save' : 'save' }}</button>
     <button @click="closeModal">close</button>
   </div>
 </template>
 
 <script setup>
 
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 
 
 const props = defineProps({
   open: {
     type: Boolean,
     default: false,
+  },
+  initialTitle: {
+    type: String,
+    default: ''
+  },
+  initialText: {
+    type: String,
+    default: ''
+  },
+  isEditMode: { 
+    type: Boolean, 
+    default: false 
   }
 });
 
 const title = ref('');
 const text = ref('');
+
+// 초기값 설정
+watch(() => props.open, (newValue) => {
+  if (newValue) {
+    title.value = props.initialTitle
+    text.value = props.initialText
+  }
+})
 
 
 const emit = defineEmits(['close', 'save']);
@@ -37,7 +58,9 @@ const saveBook = () => {
     emit('save', {
       title: title.value,
       text: text.value
-    });
+    },
+    props.isEditMode
+    );
     
     // 저장 후 입력 필드 초기화
     title.value = '';

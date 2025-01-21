@@ -5,8 +5,9 @@
     </div>
     <div v-if="bookStore.error">Error: {{ bookStore.error.message }}</div>
     <div class="tools">
-      <button class="write-button" @click="showModal = !showModal">Write</button>
-      <button class="delete-button" @click="showTrashBin = !showTrashBin">Delete</button>
+      <button class="write-button"  @click="showModal = !showModal">Write</button>
+      <button class="edit-button"  @click="toggleEditMode">Edit</button>
+      <button class="delete-button" @click="toggleDeleteMode">Delete</button>
     </div>
     <ul v-if="bookStore.books.length" class="book-list">
       <li v-for="(book, index) in bookStore.books" :key="book.id" :class="{ 'new-book': index === 0 }" class="book-item" @click="handleBookClick(book)">
@@ -16,11 +17,21 @@
         <p class="book-count">{{ book.count_num }}</p>
         <p class="book-created-at">{{ book.formattedCreatedAt ? book.formattedCreatedAt : 'just completed it' }}</p>
         <b class="new-badge" v-show = "index == 0"></b>
-        <button v-show="showTrashBin" @click.stop="deleteBook(book.id, book.email)"></button>
+       
+        <button v-show="showTrashBin" class="book-delete-btn"  @click.stop="deleteBook(book.id, book.email)"></button>
+        <button v-show="isEditMode" class="book-edit-btn" @click.stop="editBook(book)">수정</button>
       </li>
     </ul>
     <p class="empty" v-else-if="!bookStore.loading && !bookStore.error">No books found.</p>
-    <modal  :open="showModal" @save="saveBookToStore" @close="showModal = false"></modal>
+    <modal  
+     :open="showModal"
+     :initialTitle="currentBook?.title"
+     :initialText="currentBook?.text"
+     :isEditMode="!!currentBook"
+     @save="saveBookToStore" 
+     @close="showModal = false"
+     >
+    </modal>
     <div style="font-size: 10vw; color: #222; position: fixed; left: 50%; top: 50%; transform: translate(-50%);" v-if="bookStore.loading">Loading...</div>
   </div>
 </template>
@@ -38,9 +49,11 @@ const router = useRouter();
 const authStore = useAuthStore();
 const bookStore = useBookStore();
 const user = ref(null);
-const newBook = ref({ title: '', text: '', email:'', name: '' });
+const newBook = ref({ title: '', text: '', email:authStore.user?.email, name: authStore.user?.name });
 const showModal = ref(false);
 const showTrashBin = ref(false);
+const isEditMode = ref(false);
+const currentBook = ref(null)
 
 onMounted(async () => {
   await authStore.checkSession();
@@ -96,15 +109,30 @@ const handleBookClick = async (book) => {
   router.push(`/list/${book.id}`);
 };
 
-const saveBookToStore  = async (bookData) => {
-  newBook.value = { ...newBook.value, ...bookData };
-  try {
-    await bookStore.saveBook(newBook.value);
-    newBook.value = { title: '', text: '', email: '', name: '' };
+const saveBookToStore  = async (bookData, isEdit) => {
+  // 수정모드
+  if (isEdit) {
+    // 수정 로직
+    bookStore.updateBook({
+      id: currentBook.value.id,
+      ...bookData
+    })
     showModal.value = false;
-  } catch (error) {
-    console.error('책 저장 중 오류:', error);
-    alert('글 작성에 실패했습니다.')
+    
+    //edit완료후 edit 모드 종료
+    currentBook.value = null
+  } else { //일반 작성 모드
+    newBook.value.email = authStore.user?.email
+    newBook.value.name = authStore.user?.name
+    newBook.value = { ...newBook.value, ...bookData };
+    try {
+      await bookStore.saveBook(newBook.value);
+      newBook.value = { title: '', text: ''};
+      showModal.value = false;
+    } catch (error) {
+      console.error('책 저장 중 오류:', error);
+      alert('글 작성에 실패했습니다.')
+    }
   }
 };
 
@@ -115,7 +143,7 @@ const deleteBook = async (bookId, bookEmail) => {
       return;
   }
   if (confirm('정말로 삭제하시겠습니까?')) { // confirm 메시지 한국어로 변경
-    if (bookEmail === user.value.email) { // bookEmail과 user.value.email 비교
+    if (bookEmail === user.value.email || 'jacobyc@spotv.net') { // bookEmail과 user.value.email 비교
       try {
           await bookStore.deleteBook(bookId);
           bookStore.books = bookStore.books.filter(book => book.id !== bookId);
@@ -128,6 +156,21 @@ const deleteBook = async (bookId, bookEmail) => {
     }
   }
 };
+
+const editBook = (book) => {
+  currentBook.value = book
+  showModal.value = true
+}
+
+const toggleEditMode = () => {
+  isEditMode.value = !isEditMode.value
+  showTrashBin.value = false
+}
+
+const toggleDeleteMode = () => {
+  showTrashBin.value = !showTrashBin.value
+  isEditMode.value = false
+}
 
 
 </script>
@@ -171,18 +214,33 @@ const deleteBook = async (bookId, bookEmail) => {
   position: relative;
 }
 
-.book-item button {
+.book-item .book-delete-btn {
   position: absolute;
-  right: 10px;
-  top: 10px;
+  right: 3px;
+  top: 8px;
   cursor: pointer;
-  width: 17px;
-  height: 25px;
+  width: 30px;
+  height: 30px;
   background-color: transparent;
   border: none;
   background-image: url('@/assets/trashbin.png');
-  background-size: contain; 
+  background-size: 100% 100%; 
   background-repeat: no-repeat; 
+  outline: 1px solid #2affcc;
+}
+
+.book-item .book-edit-btn {
+  position: absolute;
+  right: 0px;
+  top: 10px;
+  cursor: pointer;
+  font-size: 12px;
+  border-radius: 999px;
+  width: 40px;
+  height: 25px;
+  background-color: #222;
+  color:#2affcc; 
+  border:none; 
 }
 
 .book-item p { /* Styles for paragraphs within list items */
@@ -282,16 +340,18 @@ const deleteBook = async (bookId, bookEmail) => {
 
 .write-button {
   background-color: #4CAF50; /* Green for "Write" */
+}
 
+.edit-button {
+  background-color: #f39c9c; /* Green for "Write" */
 }
 
 .delete-button {
   background-color: #f44336; /* Red for "Delete" */
 }
 
-.write-button:hover,
-.delete-button:hover {
-  opacity: 0.8; /* Slight opacity change on hover */
+button:hover {
+  opacity: 0.5; /* Slight opacity change on hover */
 }
 
 

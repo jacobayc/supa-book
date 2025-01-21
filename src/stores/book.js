@@ -81,43 +81,74 @@ export const useBookStore = defineStore('book', {
         }
       },
 
-      // 특정 ID의 책 조회 메서드 추가
-      async fetchBookById(bookId) {
-        console.log('filter')
-        this.loading = true;
-        this.error = null;
-          try {
-              const { data, error } = await supabase
-                  .from('books')
-                  .select('*')
-                  .eq('id', bookId)
-                  .single(); // 단일 레코드 반환
+    // 특정 ID의 책 조회 메서드 추가
+    async fetchBookById(bookId) {
+      console.log('filter')
+      this.loading = true;
+      this.error = null;
+        try {
+            const { data, error } = await supabase
+                .from('books')
+                .select('*')
+                .eq('id', bookId)
+                .single(); // 단일 레코드 반환
 
-              if (error) {
-                  throw error;
-              }
+            if (error) {
+                throw error;
+            }
 
-              // 날짜 포맷팅 로직 추가
-              const createdAt = new Date(data.created_at);
-              const formattedCreatedAt = `${createdAt.getFullYear()}.${
-                  String(createdAt.getMonth() + 1).padStart(2, '0')
-              }.${String(createdAt.getDate()).padStart(2, '0')}.${
-                  String(createdAt.getHours()).padStart(2, '0')
-              }.${String(createdAt.getMinutes()).padStart(2, '0')}`;
+            // 날짜 포맷팅 로직 추가
+            const createdAt = new Date(data.created_at);
+            const formattedCreatedAt = `${createdAt.getFullYear()}.${
+                String(createdAt.getMonth() + 1).padStart(2, '0')
+            }.${String(createdAt.getDate()).padStart(2, '0')}.${
+                String(createdAt.getHours()).padStart(2, '0')
+            }.${String(createdAt.getMinutes()).padStart(2, '0')}`;
 
-              this.currentBook = { 
-                  ...data, 
-                  formattedCreatedAt 
-              };
+            this.currentBook = { 
+                ...data, 
+                formattedCreatedAt 
+            };
 
-              return this.currentBook;
-          } catch (error) {
-              console.error('Error fetching book:', error);
-              this.error = error;
-              return null;
-          } finally {
-              this.loading = false;
+            return this.currentBook;
+        } catch (error) {
+            console.error('Error fetching book:', error);
+            this.error = error;
+            return null;
+        } finally {
+            this.loading = false;
+        }
+      },
+
+      // 기존 코드에 updateBook 메서드 추가
+      async updateBook(updatedBook) {
+        this.loading = true
+        this.error = null
+        try {
+          const { data, error } = await supabase
+            .from('books')
+            .update({ 
+              title: updatedBook.title, 
+              text: updatedBook.text 
+            })
+            .eq('id', updatedBook.id)
+            .select()
+
+          if (error) {
+            throw error
           }
+
+          // 로컬 상태 업데이트
+          const index = this.books.findIndex(book => book.id === updatedBook.id)
+          if (index !== -1) {
+            this.books[index] = { ...this.books[index], ...data[0] }
+          }
+        } catch (error) {
+          console.error('책 업데이트 중 오류:', error)
+          this.error = error
+        } finally {
+          this.loading = false
         }
       }
+    }
 });
