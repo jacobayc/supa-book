@@ -1,7 +1,7 @@
 <template>
   <div class="main-list">
     <div class="info">
-      <p v-if="user"> <b>Welcome</b> <span>{{ user.name }}</span></p>
+      <p v-if="user"> <b>Welcome</b> <span>{{ user.name }}</span><b> 님</b></p>
     </div>
     <div v-if="bookStore.error">Error: {{ bookStore.error.message }}</div>
     <div class="tools">
@@ -192,7 +192,7 @@ const toggleDeleteMode = () => {
 
 .info p span {
   color: salmon;
-  font-size: 16px;
+  font-size: 17px;
 }
 
 .book-list { /* New class for the list */
@@ -205,7 +205,7 @@ const toggleDeleteMode = () => {
 
 .book-item { /* New class for list items */
   width: 98%;
-  margin: 10px auto;
+  margin: 15px auto;
   display: flex; /* Arrange items horizontally */
   align-items: center; /* Vertically align content within items */
   padding: 10px 0px; /* Add some padding */
@@ -226,7 +226,6 @@ const toggleDeleteMode = () => {
   background-image: url('@/assets/trashbin.png');
   background-size: 100% 100%; 
   background-repeat: no-repeat; 
-  outline: 1px solid #2affcc;
 }
 
 .book-item .book-edit-btn {
@@ -252,7 +251,7 @@ const toggleDeleteMode = () => {
 }
 
 .new-book {
-  outline: 1px solid pink;
+  outline: 2px solid pink;
   position: relative;
 }
 
