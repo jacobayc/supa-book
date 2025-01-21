@@ -18,10 +18,7 @@ const props = defineProps({
   open: {
     type: Boolean,
     default: false,
-  },
-  // newBook : {
-  //   type: Object
-  // }
+  }
 });
 
 const title = ref('');
