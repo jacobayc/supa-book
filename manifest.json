@@ -1,9 +1,9 @@
 {
-  "name": "Life mark",
-  "short_name": "L-M",
+  "name": "Daily Scribble",
+  "short_name": "Daily Scribble",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#000",
+  "background_color": "#FF69B4",
   "theme_color": "#FF69B4",
   "icons": [
     {
