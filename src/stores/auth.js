@@ -32,14 +32,15 @@ export const useAuthStore = defineStore('auth', {
       }
     },
     // 회원가입
-    async signUpWithEmail(email, password, name) {
-        try {
+    async signUpWithEmail(email, password, name, nickname) {
+        try { 
             const { data, error } = await supabase.auth.signUp({ 
               email, 
               password,
               options: {
                 data: {
                   name,
+                  nickname
                 },
               },
             });
@@ -58,7 +59,7 @@ export const useAuthStore = defineStore('auth', {
         // 현재 사용자의 메타데이터 업데이트
         const { data, error } = await supabase.auth.updateUser({
           data: { 
-            name: newNickname 
+            nickname: newNickname 
           }
         });
     

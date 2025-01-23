@@ -23,12 +23,13 @@
         <div class="modal-body">
           <div class="profile-info">
             <p><strong>아이디 : </strong> {{ authStore.user.email }}</p>
+            <p><strong>이름 : </strong> {{ authStore.user.name }}</p>
             <div class="nickname-section">
               <p><strong>닉네임 : </strong></p>
               <input 
                 type="text" 
                 v-model="newNickname" 
-                :placeholder="authStore.user.name || '닉네임 입력'"
+                :placeholder="authStore.user.nickname || '닉네임 입력'"
               />
               <button @click="updateNickname" class="update-btn">변경</button>
             </div>
@@ -59,7 +60,7 @@ const openProfileModal = () => {
   isChange.value = true;
   isMenuOpen.value = false;
   // 현재 닉네임을 초기값으로 설정
-  newNickname.value = authStore.user.name || '';
+  newNickname.value = authStore.user.nickname || '';
 };
 
 const closeProfileModal = () => {

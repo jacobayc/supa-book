@@ -1,7 +1,7 @@
 <template>
   <div class="main-list">
     <div class="info">
-      <p v-if="user"> <b>Welcome</b> <span>{{ user.name }}</span><b> 님</b></p>
+      <p v-if="user"> <b>Welcome</b> <span>{{ user.name }}({{ user.nickname }})</span><b> 님</b></p>
     </div>
     <div v-if="bookStore.error">Error: {{ bookStore.error.message }}</div>
     <div class="tools">
@@ -13,7 +13,7 @@
       <li v-for="(book, index) in bookStore.books" :key="book.id" :class="{ 'new-book': index === 0 }" class="book-item" @click="handleBookClick(book)">
         <p class="book-index">{{ bookStore.books.length - 1 - index }}</p>
         <p class="book-title">{{ book.title }}</p>
-        <p class="book-email">{{ book.email == user?.email ? `${book.name} (내 글)` : book.name }}</p>
+        <p class="book-email">{{ book.email == user?.email ? `${book.nickname} (내 글)` : book.name }}</p>
         <p class="book-count">{{ book.count_num }}</p>
         <p class="book-created-at">{{ book.formattedCreatedAt ? book.formattedCreatedAt : 'just completed it' }}</p>
         <b class="new-badge" v-show = "index == 0"></b>
@@ -49,7 +49,7 @@ const router = useRouter();
 const authStore = useAuthStore();
 const bookStore = useBookStore();
 const user = ref(null);
-const newBook = ref({ title: '', text: '', email:authStore.user?.email, name: authStore.user?.name });
+const newBook = ref({ title: '', text: '', email:authStore.user?.email, name: authStore.user?.name, nickname: authStore.user?.nickname });
 const showModal = ref(false);
 const showTrashBin = ref(false);
 const isEditMode = ref(false);
@@ -60,6 +60,7 @@ onMounted(async () => {
   user.value = authStore.user; 
   newBook.value.email = authStore.user?.email
   newBook.value.name = authStore.user?.name
+  newBook.value.nickname = authStore.user?.nickname
   bookStore.fetchBooks();
   emitter.on('session-updated', async () => {
     await authStore.checkSession()
@@ -124,6 +125,7 @@ const saveBookToStore  = async (bookData, isEdit) => {
   } else { //일반 작성 모드
     newBook.value.email = authStore.user?.email
     newBook.value.name = authStore.user?.name
+    newBook.value.nickname = authStore.user?.nickname
     newBook.value = { ...newBook.value, ...bookData };
     try {
       await bookStore.saveBook(newBook.value);

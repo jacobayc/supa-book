@@ -14,7 +14,8 @@
       <div v-else>
         <input type="email" v-model="email" placeholder="이메일" class="input-field" />
         <input type="password" v-model="password" placeholder="비밀번호" class="input-field" />
-        <input type="text" v-model="name" placeholder="닉네임" class="input-field" />
+        <input type="text" v-model="name" placeholder="이름" class="input-field" />
+        <input type="text" v-model="nickname" placeholder="닉네임" class="input-field" />
         <button @click="signUp" class="submit-button">가입하기</button>
       </div>
     </div>
@@ -41,6 +42,7 @@ const authStore = useAuthStore();
 const email = ref('');
 const password = ref('');
 const name = ref('');
+const nickname = ref('');
 const error = ref(null);
 const isLoginFormVisible = ref(true); // 로그인 폼이 기본으로 보이도록 설정
 
@@ -66,7 +68,7 @@ const signIn = async () => {
 const signUp = async () => {
   error.value = null;
   try {
-    await authStore.signUpWithEmail(email.value, password.value, name.value);
+    await authStore.signUpWithEmail(email.value, password.value, name.value, nickname.value);
     alert("인증 메일이 발송되었습니다. 메일함을 확인해주세요");
   } catch (err) {
     console.error('회원가입 오류:', err);
@@ -120,6 +122,10 @@ button.active {
   width: 300px; /* 폼 너비 조정 */
 }
 
+.form-container >div {
+  height: auto;
+}
+
 .welcome-message {
   width: 100%;
   max-width: 1200px;
@@ -143,9 +149,6 @@ button.active {
 .submit-button {
   width: 100%;
   margin: 0 auto;
-  position: absolute;
-  bottom: 55px;
-  left: 0;
   background-image: linear-gradient(to right, #800080, #FF69B4); /* 제출 버튼 그라데이션 */
   color: white;
   padding: 12px;
