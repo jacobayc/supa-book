@@ -70,7 +70,7 @@ export const useBookStore = defineStore('book', {
               const hours = String(createdAt.getHours()).padStart(2, '0');
               const minutes = String(createdAt.getMinutes()).padStart(2, '0');
 
-              const formattedCreatedAt = `${year}.${month}.${day}.${hours}.${minutes}`;
+              const formattedCreatedAt = `${year}.${month}.${day}.${hours}:${minutes}`;
               
               return { ...book, formattedCreatedAt };
           }) || []; // data가 null일 경우 빈 배열 할당

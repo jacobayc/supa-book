@@ -94,9 +94,8 @@ const logout = async () => {
 
 <style scoped>
 .header {
-  background-color: #f0f0f0;
+  background-color: #343434;
   padding: 0px 10px;
-  border-bottom: 1px solid #ddd;
   position: fixed;
   top: 0;
   left: 0;
@@ -131,7 +130,7 @@ const logout = async () => {
 .bar {
   width: 25px;
   height: 3px;
-  background-color: #333;
+  background-color: #ccc;
   margin: 3px 0;
   transition: 0.4s;
 }
@@ -198,16 +197,24 @@ const logout = async () => {
   padding-bottom: 10px;
 }
 
+.modal-header h2 {
+  font-size: 20px;
+}
+
 .close-btn {
   background: none;
   border: none;
-  font-size: 24px;
+  font-size: 32px;
   cursor: pointer;
   color: #2faacc;
 }
 
 .profile-info {
   margin-top: 15px;
+}
+
+.profile-info p {
+  margin: 5px 0;
 }
 
 .nickname-section {
@@ -218,13 +225,20 @@ const logout = async () => {
 }
 
 .nickname-section input {
+  width:100%;
+  max-width: 180px;
   flex-grow: 1;
   padding: 8px;
-  border: 1px solid #ddd;
   border-radius: 4px;
+  height: 24px;
+  border: none;
+  outline: none;
 }
 
 .update-btn {
+  height: 24px;
+  line-height: 10px;
+  letter-spacing: -1px;
   padding: 8px 15px;
   background-color: #4CAF50;
   color: white;

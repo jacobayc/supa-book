@@ -15,9 +15,8 @@
         <p class="book-title">{{ book.title }}</p>
         <p class="book-email">{{ book.email == user?.email ? `${book.nickname} (내 글)` : book.name }}</p>
         <p class="book-count">{{ book.count_num }}</p>
-        <p class="book-created-at">{{ book.formattedCreatedAt ? book.formattedCreatedAt : 'just completed it' }}</p>
+        <p class="book-created-at">{{ book.formattedCreatedAt ? book.formattedCreatedAt : '방금전' }}</p>
         <b class="new-badge" v-show = "index == 0"></b>
-       
         <button v-show="showTrashBin && book.email == user.email" class="book-delete-btn"  @click.stop="deleteBook(book.id, book.email)"></button>
         <button v-show="isEditMode && book.email == user.email" class="book-edit-btn" @click.stop="editBook(book)">수정</button>
       </li>
@@ -207,7 +206,7 @@ const toggleDeleteMode = () => {
 
 .book-item { /* New class for list items */
   width: 98%;
-  margin: 15px auto;
+  margin: 10px auto;
   display: flex; /* Arrange items horizontally */
   align-items: center; /* Vertically align content within items */
   padding: 10px 0px; /* Add some padding */
@@ -246,6 +245,7 @@ const toggleDeleteMode = () => {
 
 .book-item p { /* Styles for paragraphs within list items */
   margin: 0 3px; /* Add some space between paragraphs */
+  position: relative;
 }
 
 .book-item p:first-child { /* Style the first paragraph (book ID) */
@@ -270,7 +270,7 @@ const toggleDeleteMode = () => {
 }
 
 .book-index {
-  color: #888;
+  color: #2affcc;
   width: 2%; 
   font-size: 12px;
   text-align: center;
@@ -373,15 +373,18 @@ button:hover {
     width: 3%; 
   }
   .book-title {
+    letter-spacing: -1px;
     font-size: 14px;
-    width: 45%;
+    width: 35%;
   }
 
   .book-email {
+    letter-spacing: -1px;
     width: 20%;
   }
   .book-created-at {
-    width: 15%;
+    letter-spacing: -1px;
+    width: 25%;
   }
 }
 </style>
