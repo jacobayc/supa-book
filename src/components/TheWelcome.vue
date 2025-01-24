@@ -16,7 +16,13 @@
         <p class="book-email">{{ book.email == user?.email ? `${book.nickname} (내 글)` : book.name }}</p>
         <p class="book-count">{{ book.count_num }}</p>
         <p class="book-created-at">{{ book.formattedCreatedAt ? book.formattedCreatedAt : '방금전' }}</p>
-        <b class="new-badge" v-show = "index == 0"></b>
+        <b class="new-badge" v-show = "index == 0">
+          <Vue3Lottie 
+            class="lottie"
+            :animationData="animationJSON"
+            :speed= ".5"
+          />
+        </b>
         <button v-show="showTrashBin && book.email == user.email" class="book-delete-btn"  @click.stop="deleteBook(book.id, book.email)"></button>
         <button v-show="isEditMode && book.email == user.email" class="book-edit-btn" @click.stop="editBook(book)">수정</button>
       </li>
@@ -31,7 +37,13 @@
      @close="showModal = false"
      >
     </modal>
-    <div style="font-size: 10vw; color: #222; position: fixed; left: 50%; top: 50%; transform: translate(-50%);" v-if="bookStore.loading">Loading...</div>
+    <div class="loading" v-if="bookStore.loading">
+      <Vue3Lottie 
+        class="lottie"
+        :animationData="loadingJSON"
+        :speed= ".3"
+      />
+    </div>
   </div>
 </template>
 
@@ -43,6 +55,9 @@ import { useRouter } from 'vue-router';
 import { supabase } from '../utils/supabaseClient';
 import emitter from '../utils/eventBus'
 import Modal from '../components/Modal.vue'; 
+import { Vue3Lottie } from 'vue3-lottie'
+import animationJSON from '@/assets/new.json'
+import loadingJSON from '@/assets/loading.json'
 
 const router = useRouter();
 const authStore = useAuthStore();
@@ -259,14 +274,19 @@ const toggleDeleteMode = () => {
 
 .new-badge {
   position: absolute;
-  left: -25px;
+  left: -15px;
   top: -25px;
   display: block;
-  width: 100px;
-  height: 40px;
-  background-image: url('@/assets/new_badge.png');
-  background-size: contain; /* 또는 cover, auto 등 필요에 따라 조절 */
-  background-repeat: no-repeat; /* 이미지 반복 방지 */
+  width: 50px;
+  height: 50px;
+  /* background:red; */
+  /* background-image: url('@/assets/new_badge.png');
+  background-size: contain; 
+  background-repeat: no-repeat; */
+}
+
+.lottie {
+  transform:scale(2);
 }
 
 .book-index {
@@ -279,7 +299,7 @@ const toggleDeleteMode = () => {
   width: 2%; 
   font-size: 12px;
   text-align: center;
-  color: rgb(170, 73, 170);
+  color: rgb(205, 247, 177);
 }
 
 .book-title {
@@ -307,6 +327,7 @@ const toggleDeleteMode = () => {
   overflow: hidden; /* 내용이 넘칠 경우 숨김 */
   text-overflow: ellipsis; /* 말줄임표(...) 표시 */
   white-space: nowrap; /* 줄바꿈 방지 */
+  color: rgb(209, 137, 4);
 }
 
 .empty {
@@ -355,6 +376,17 @@ button:hover {
   opacity: 0.5; /* Slight opacity change on hover */
 }
 
+.loading {
+  padding: 0px 40px;
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform:translate(-50%);
+  width: 100%;
+  max-width: 100px;
+  margin: 0 auto;
+}
+
 
 @media (max-width: 1199px) { /* 1200px 미만 */
   .tools {
@@ -385,6 +417,9 @@ button:hover {
   .book-created-at {
     letter-spacing: -1px;
     width: 25%;
+  }
+  .lottie {
+    transform:scale(1.3);
   }
 }
 </style>

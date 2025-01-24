@@ -2,6 +2,13 @@
 <template>
   <header class="header">
     <div class="header-content">
+      <div class="logo">
+        <Vue3Lottie 
+          :animationData="animationJSON"
+          :height="50"
+          :speed= ".5"
+        />
+      </div>
       <div class="hamburger" @click="toggleMenu">
         <div class="bar"></div>
         <div class="bar"></div>
@@ -43,10 +50,10 @@
 <script setup>
 import { ref } from 'vue';
 import { useAuthStore } from '../stores/auth';
-import { useRouter } from 'vue-router';
 import emitter from '../utils/eventBus'
+import { Vue3Lottie } from 'vue3-lottie'
+import animationJSON from '@/assets/logo.json'
 
-const router = useRouter();
 const authStore = useAuthStore();
 const isMenuOpen = ref(false);
 const isChange = ref(false);
@@ -114,9 +121,11 @@ const logout = async () => {
 }
 
 .logo {
-  font-size: 1.5em;
-  font-weight: bold;
-  margin: 0;
+  width:50px;
+}
+
+.logo img {
+  width:100%;
 }
 
 .hamburger {
