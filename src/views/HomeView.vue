@@ -17,8 +17,10 @@ import TheIntro from '../components/TheIntro.vue';
 import TheWelcome from '../components/TheWelcome.vue';
 import TheHeader from '../components/Header.vue';
 import { useAuthStore } from '../stores/auth';
+import { useVisitorStore } from '../stores/visitor';
 
 const authStore = useAuthStore();
+const visitorStore = useVisitorStore()
 const isLoading = ref(true); // 로딩 상태 추가
 
 onMounted(async () => {
@@ -26,6 +28,11 @@ onMounted(async () => {
     await authStore.checkSession();
   } finally {
     isLoading.value = false;
+  }
+  try {
+    await visitorStore.saveVisitor()
+  } catch (error) {
+    console.log(error,"not access visitor")
   }
 });
 </script>
