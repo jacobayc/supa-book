@@ -139,7 +139,9 @@ const saveBookToStore  = async (bookData, isEdit) => {
       id: currentBook.value.id,
       ...bookData
     })
+    alert('수정이 완료되었습니다.')
     showModal.value = false;
+    isEditMode.value = false;
     
     //edit완료후 edit 모드 종료
     currentBook.value = null
