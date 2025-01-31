@@ -23,8 +23,8 @@
             :speed= ".5"
           />
         </b>
-        <button v-show="showTrashBin && book.email == user.email" class="book-delete-btn"  @click.stop="deleteBook(book.id, book.email)"></button>
-        <button v-show="isEditMode && book.email == user.email" class="book-edit-btn" @click.stop="editBook(book)">수정</button>
+        <button v-show="showTrashBin && book.email == user.email || (showTrashBin && adminUserCheck)" class="book-delete-btn"  @click.stop="deleteBook(book.id, book.email)"></button>
+        <button v-show="isEditMode && book.email == user.email || (isEditMode && adminUserCheck)" class="book-edit-btn" @click.stop="editBook(book)">수정</button>
       </li>
     </ul>
     <p class="empty" v-else-if="!bookStore.loading && !bookStore.error">No books found.</p>
@@ -48,7 +48,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useAuthStore } from '../stores/auth';
 import { useBookStore } from '../stores/book';
 import { useRouter } from 'vue-router';
@@ -87,6 +87,13 @@ onUnmounted(() => {
   emitter.off('session-updated')
 })
 
+const adminUserCheck = computed (()=> {
+  return (
+    authStore.user?.email == 'jacobyc@spotv.net' ||
+    authStore.user?.email == 'kyuheejeon90@gmail.com' ||
+    authStore.user?.email == 'yaechan123@naver.com'
+  )
+})
 
 const handleBookClick = async (book) => {
   const bookIndex = bookStore.books.findIndex(b => b.id === book.id);
