@@ -17,19 +17,19 @@ export const useVisitorStore = defineStore('visitor', {
         const { data: existingVisit, error: checkError } = await supabase
           .from('visitor')
           .select('*')
-          .eq('email', authStore.user.email)
+          .eq('email', authStore.user?.email)
           .gte('visited_at', new Date().toISOString().split('T')[0]) // 오늘 날짜 이후
           .limit(1)
     
-        // 이미 오늘 방문 기록이 있다면 저장하지 않음
-        if (existingVisit && existingVisit.length > 0) {
+        // 이미 오늘 방문 기록이 있거나 비로그인자의 경우 저장하지 않음
+        if (existingVisit && existingVisit.length > 0 || authStore.user?.email == undefined) {
           return null
         }
     
         const visitorData = {
-          name: authStore.user.name,
-          nickname: authStore.user.nickname || '',
-          email: authStore.user.email,
+          name: authStore.user?.name,
+          nickname: authStore.user?.nickname || '',
+          email: authStore.user?.email,
           visited_at: new Date().toISOString()
         }
     
