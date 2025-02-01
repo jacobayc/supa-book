@@ -21,12 +21,12 @@ const bookStore = useBookStore();
 const book = ref(null);
 
 // props로 쿼리 파라미터 직접 받기
-const props = defineProps({
-  id: {
-    type: String,
-    default: null
-  }
-})
+// const props = defineProps({
+//   id: {
+//     type: String,
+//     default: null
+//   }
+// })
 
 onMounted(async () => {
 
