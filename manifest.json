@@ -7,12 +7,12 @@
   "theme_color": "#b01a22",
   "icons": [
     {
-      "src": "https://limit-books.netlify.app/assets/new_badge-jiBy_5B6.png",
+      "src": "/icons/new_badge.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "https://limit-books.netlify.app/assets/new_badge-jiBy_5B6.png", 
+      "src": "/icons/new_badge.png", 
       "sizes": "512x512",
       "type": "image/png"
     }
