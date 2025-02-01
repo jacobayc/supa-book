@@ -1,6 +1,7 @@
 <template>
   <div class="container">
-    <div class="tab-container">
+    <div class="logo" @click="handleLogoClick"></div>
+    <div class="tab-container" v-if="hiddenButton">
       <button :class="{ active: isLoginFormVisible }" @click="showLoginForm">로그인</button>
       <button :class="{ active: !isLoginFormVisible }" @click="showSignUpForm">회원가입</button>
     </div>
@@ -46,6 +47,19 @@ const nickname = ref('');
 const error = ref(null);
 const isLoginFormVisible = ref(true); // 로그인 폼이 기본으로 보이도록 설정
 
+const logoClickCount = ref(0)
+const hiddenButton = ref(false);
+
+const handleLogoClick = () => {
+  hiddenButton.value = false
+  logoClickCount.value++
+  
+  if (logoClickCount.value === 10) {
+    hiddenButton.value = true
+    logoClickCount.value = 0
+  }
+}
+
 const showLoginForm = () => {
     isLoginFormVisible.value = true;
 };
@@ -86,6 +100,17 @@ const signUp = async () => {
   align-items: center;
   min-height: 300px;
   position: relative; /* 탭 컨테이너의 기준 위치 설정 */
+}
+.logo {
+  width: 50px;
+  height: 50px;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 9999;
+}
+.logo img {
+  width: 100%;
 }
 
 .tab-container {
@@ -133,6 +158,7 @@ button.active {
   top: 100px;
   left: 50%;
   transform:translateX(-50%);
+  z-index:2;
   text-align: center;
 }
 
