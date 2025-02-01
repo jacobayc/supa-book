@@ -3,8 +3,8 @@
   "short_name": "Daily Scribble",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#FF69B4",
-  "theme_color": "#FF69B4",
+  "background_color": "#b01a22",
+  "theme_color": "#b01a22",
   "icons": [
     {
       "src": "https://limit-books.netlify.app/assets/new_badge-jiBy_5B6.png",
