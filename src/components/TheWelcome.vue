@@ -5,14 +5,29 @@
     </div>
     <div v-if="bookStore.error">Error: {{ bookStore.error.message }}</div>
     <div class="tools">
+      <input 
+        type="text" 
+        v-model="searchText" 
+        placeholder="검색..."
+        class="search-input"
+        @keyup.enter="handleSearch"
+        style="max-width:100px;"
+      />
+      <button style="margin-right:10px;" class="search-button" @click="handleSearch">Search</button>
       <button class="write-button"  @click="showModal = !showModal">Write</button>
       <button class="edit-button"  @click="toggleEditMode">Edit</button>
       <button class="delete-button" @click="toggleDeleteMode">Delete</button>
     </div>
-    <ul v-if="bookStore.books.length" class="book-list">
-      <li v-for="(book, index) in bookStore.books" :key="book.id" :class="{ 'new-book': index === 0 }" class="book-item" @click="handleBookClick(book)">
+    <ul v-if="filteredBooks.length" class="book-list">
+      <li v-for="(book, index) in filteredBooks" :key="book.id" :class="{ 'new-book': index === 0 }" class="book-item" @click="handleBookClick(book)">
         <p class="book-index">{{ bookStore.books.length - 1 - index }}</p>
-        <p class="book-title">{{ book.title }}</p>
+        <p class="book-title">
+          <mark v-for="(part, index) in highlightParts(book.title)" 
+                :key="index"
+                :class="{ 'highlight': part.isMatch }">
+            {{ part.text }}
+          </mark>
+        </p>
         <p class="book-email">{{ book.email == user?.email ? `${book.nickname} (내 글)` : book.name }}</p>
         <p class="book-count">{{ book.count_num }}</p>
         <p class="book-created-at">{{ book.formattedCreatedAt ? book.formattedCreatedAt : '방금전' }}</p>
@@ -48,7 +63,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted, onUnmounted, computed } from 'vue';
 import { useAuthStore } from '../stores/auth';
 import { useBookStore } from '../stores/book';
 import { useRouter } from 'vue-router';
@@ -67,7 +82,13 @@ const newBook = ref({ title: '', text: '', email:authStore.user?.email, name: au
 const showModal = ref(false);
 const showTrashBin = ref(false);
 const isEditMode = ref(false);
-const currentBook = ref(null)
+const currentBook = ref(null);
+const searchText = ref('');
+const searchResult = ref('');
+
+const handleSearch = () => {
+  searchResult.value = searchText.value;
+};
 
 onMounted(async () => {
   await authStore.checkSession();
@@ -94,6 +115,35 @@ const adminUserCheck = computed (()=> {
     authStore.user?.email == 'yaechan123@naver.com'
   )
 })
+
+// 필터링된 도서 목록을 반환하는 computed 속성 추가
+const filteredBooks = computed(() => {
+  if (!searchResult.value) return bookStore.books;
+  
+  return bookStore.books.filter(book => 
+    book.title.includes(searchResult.value) || book.text.includes(searchResult.value)
+  );
+});
+
+// 검색 text 하이라이트 처리
+const highlightParts = (text) => {
+  if (!searchResult.value) return [{ text, isMatch: false }];
+  
+  const parts = text.split(searchResult.value);
+  const result = [];
+  
+  parts.forEach((part, index) => {
+    if (index > 0) {
+      result.push({ text: searchResult.value, isMatch: true });
+    }
+    if (part) {
+      result.push({ text: part, isMatch: false });
+    }
+  });
+  
+  return result;
+};
+
 
 const handleBookClick = async (book) => {
   const bookIndex = bookStore.books.findIndex(b => b.id === book.id);
@@ -128,7 +178,12 @@ const handleBookClick = async (book) => {
       }
   }
 
-  router.push(`/list/${book.id}`);
+  router.push({
+    path: `/list/${book.id}`,
+    query: { 
+      search: searchResult.value // 검색어를 쿼리 파라미터로 전달
+    }
+  });
 };
 
 const saveBookToStore  = async (bookData, isEdit) => {
@@ -320,6 +375,19 @@ const toggleDeleteMode = () => {
   white-space: nowrap; /* 줄바꿈 방지 */
 }
 
+mark {
+  background: none;
+  color: #fff;
+  padding: 0;
+}
+
+mark.highlight {
+  background-color: rgb(204, 204, 153);
+  color: #000;
+  padding: 2px;
+  border-radius: 2px;
+}
+
 .book-email {
   width: 15%;
   text-align: center;
@@ -369,6 +437,20 @@ const toggleDeleteMode = () => {
   cursor: pointer;
 }
 
+.search-button {
+  background-color: #666;
+  margin-right: 10px;
+}
+
+.search-input {
+  font-size: 12px;
+  padding: 5px 10px;
+  margin-right: 2px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  height: 24px;
+}
+
 .write-button {
   background-color: #4CAF50; /* Green for "Write" */
 }
@@ -414,7 +496,7 @@ button:hover {
     width: 3%; 
   }
   .book-title {
-    letter-spacing: -1px;
+    letter-spacing: -1.2px;
     font-size: 14px;
     width: 35%;
   }

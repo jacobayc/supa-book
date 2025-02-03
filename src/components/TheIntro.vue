@@ -217,4 +217,11 @@ button.active {
   background-image: url('@/assets/gradient.png');
   background-repeat: no-repeat; 
 }
+
+@media (max-width: 1199px) {
+  .main-bg {
+    background-image: url('@/assets/nature_m.jpg');
+    background-size: cover;
+  }
+}
 </style>

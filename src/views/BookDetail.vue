@@ -4,21 +4,30 @@
     <!-- 조건부 렌더링 추가 -->
     <div v-if="book" class="contents">
       <h1>" {{ book.title }} "</h1>
-      <h3><pre>{{ book.text }}</pre></h3>
+      <h3>
+        <Highlighter
+          :searchWords="searchTermArray"
+          :textToHighlight="book.text"
+          highlightClassName="highlights"
+          :highlightStyle="{ color: '#000 !important', background: 'rgb(204, 204, 153)' }"
+        />
+      </h3>
     </div>
     <div v-else>Loading...</div>
   </div>
 </template>
 
 <script setup>
-import { defineProps, onMounted, ref } from 'vue';
+import { defineProps, onMounted, ref, computed } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useBookStore } from '../stores/book';
+import Highlighter from 'vue-highlight-words'
 
 const route = useRoute()
 const router = useRouter();
 const bookStore = useBookStore();
 const book = ref(null);
+const searchTerm = ref('');
 
 // props로 쿼리 파라미터 직접 받기
 // const props = defineProps({
@@ -32,9 +41,16 @@ onMounted(async () => {
 
   // 현재 페이지 조회
   const bookId = route.params?.id
+
+   // 쿼리 파라미터에서 검색어 추출 하이라이트 처리 위함
+  searchTerm.value = route.query?.search || '';
   // 현 페이지에 맞는 책 조회
   await bookStore.fetchBookById(bookId);
   book.value = bookStore.currentBook
+});
+
+const searchTermArray = computed(() => {
+  return searchTerm.value ? [searchTerm.value] : [];
 });
 
 
@@ -58,7 +74,7 @@ const goBack = () => {
   box-sizing: border-box;
 }
 
-pre {
+h3 {
   width: 100%;
   white-space: pre-wrap;
   word-break: break-all;
@@ -76,7 +92,7 @@ h1 {
   top: 15px;
   right: 10px;
   padding: 4px 8px;
-  background-color: #42b983; /* Vue green */
+  /* background-color: #42b983; Vue green */
   color: white;
   border: none;
   border-radius: 4px;
