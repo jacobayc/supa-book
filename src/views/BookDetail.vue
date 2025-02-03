@@ -93,7 +93,7 @@ h1 {
   right: 10px;
   padding: 4px 8px;
   /* background-color: #42b983; Vue green */
-  color: white;
+  color: black;
   border: none;
   border-radius: 4px;
   cursor: pointer;
