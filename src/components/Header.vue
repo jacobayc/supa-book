@@ -25,6 +25,22 @@
       <div class="modal-content">
         <div class="modal-header">
           <h2>프로필 정보</h2>
+          <!-- 프로필 이미지 섹션 추가 -->
+          <div class="profile-image-section">
+            <img 
+              :src="profileImageUrl || '/icons/pen.png'" 
+              alt="Profile" 
+              class="profile-image"
+              @click="triggerFileInput"
+            />
+            <input 
+              type="file"
+              ref="fileInput"
+              @change="handleImageUpload"
+              accept="image/*"
+              style="display: none"
+            />
+        </div>
           <button @click="closeProfileModal" class="close-btn">&times;</button>
         </div>
         <div class="modal-body">
@@ -58,6 +74,27 @@ const authStore = useAuthStore();
 const isMenuOpen = ref(false);
 const isChange = ref(false);
 const newNickname = ref('');
+const fileInput = ref(null);
+const profileImageUrl = ref(authStore.user?.avatar_url || '');
+
+const triggerFileInput = () => {
+  fileInput.value.click();
+};
+
+const handleImageUpload = async (event) => {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  try {
+    const url = await authStore.uploadProfileImage(file);
+    console.log(url)
+    profileImageUrl.value = url;
+    alert('프로필 이미지가 업데이트되었습니다.');
+    emitter.emit('avatar-updated')
+  } catch (error) {
+    alert('이미지 업로드에 실패했습니다.');
+  }
+};
 
 const toggleMenu = () => {
   isMenuOpen.value = !isMenuOpen.value;
@@ -66,6 +103,7 @@ const toggleMenu = () => {
 const openProfileModal = () => {
   isChange.value = true;
   isMenuOpen.value = false;
+  authStore.checkSession()
   // 현재 닉네임을 초기값으로 설정
   newNickname.value = authStore.user.nickname || '';
 };
@@ -208,9 +246,11 @@ const logout = async () => {
 
 .modal-header h2 {
   font-size: 20px;
+  transform: translateY(-25px);
 }
 
 .close-btn {
+  transform: translateY(-35px);
   background: none;
   border: none;
   font-size: 32px;
@@ -254,5 +294,24 @@ const logout = async () => {
   border: none;
   border-radius: 4px;
   cursor: pointer;
+}
+
+profile-image-section {
+  margin: 10px 0;
+  text-align: center;
+}
+
+.profile-image {
+  width: 80px;
+  height: 80px;
+  border-radius: 100%;
+  object-fit: cover;
+  cursor: pointer;
+  border: 1px solid #2faacc;
+  transition: transform 0.2s;
+}
+
+.profile-image:hover {
+  transform: scale(1.05);
 }
 </style>

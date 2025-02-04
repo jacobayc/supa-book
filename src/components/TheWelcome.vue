@@ -1,7 +1,13 @@
 <template>
   <div class="main-list">
     <div class="info">
-      <p v-if="user"> <b>Welcome</b> <span>{{ user.name }}({{ user.nickname }})</span><b> 님</b></p>
+      <div :style="{
+        backgroundImage: `url(${authStore.user.avatar_url})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat'
+      }"></div>
+      <p v-if="user"><span>{{ user.name }}<span style="font-size:12px;">( {{ user.nickname }} )</span></span><b> 님</b></p>
     </div>
     <div v-if="bookStore.error">Error: {{ bookStore.error.message }}</div>
     <div class="tools">
@@ -19,13 +25,13 @@
           <line x1="21" y1="21" x2="16.65" y2="16.65" />
         </svg>
       </button>
-      <button class="write-button"  @click="showModal = !showModal">Write</button>
-      <button class="edit-button"  @click="toggleEditMode">Edit</button>
-      <button class="delete-button" @click="toggleDeleteMode">Delete</button>
+      <button class="write-button"  @click="showModal = !showModal">글쓰기</button>
+      <button class="edit-button"  @click="toggleEditMode">수정</button>
+      <button class="delete-button" @click="toggleDeleteMode">삭제</button>
     </div>
     <ul v-if="paginatedBooks.length" class="book-list">
       <li v-for="(book, index) in paginatedBooks" :key="book.id" :class="{ 'new-book': index === 0 }" class="book-item" @click="handleBookClick(book)">
-        <p class="book-index">{{ bookStore.books.length - 1 - index }}</p>
+        <p class="book-index">{{ (totalPages - currentPage) * itemsPerPage + (paginatedBooks.length - 1 - index) }} </p>
         <p class="book-title">
           <mark v-for="(part, index) in highlightParts(book.title)" 
                 :key="index"
@@ -126,6 +132,9 @@ onMounted(async () => {
   emitter.on('session-updated', async () => {
     await authStore.checkSession()
     user.value = authStore.user
+  })
+  emitter.on('avatar-updated', async () => {
+    await authStore.checkSession()
   })
 });
 
@@ -320,11 +329,19 @@ const toggleDeleteMode = () => {
 }
 
 .info {
+  display: flex;
   width: fit-content;
   height: 40px;
   transform:translateY(-5px);
   margin: 0 auto;
   font-size: 12px;
+}
+
+.info >div {
+  width: 50px;
+  height: 50px;
+  border-radius: 100%;
+  transform:translate(-10px , -10px);
 }
 
 .info p span {
@@ -412,14 +429,16 @@ const toggleDeleteMode = () => {
 }
 
 .book-index {
-  color: #2affcc;
+  color: #298f77;
   width: 2%; 
-  font-size: 12px;
+  font-size: 10px;
+  letter-spacing: -1px;
   text-align: center;
 }
 .book-count {
   width: 2%; 
-  font-size: 12px;
+  font-size: 10px;
+  letter-spacing: -1px;
   text-align: center;
   color: rgb(205, 247, 177);
 }

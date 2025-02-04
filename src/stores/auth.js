@@ -9,6 +9,58 @@ export const useAuthStore = defineStore('auth', {
     user: null, // 추가: 사용자 정보 저장
   }),
   actions: {
+    //프로필 이미지 업로드
+    async uploadProfileImage(file) {
+      try {
+        if (!this.user?.email) throw new Error('사용자가 로그인되어 있지 않습니다.');
+        // 기존 이미지가 있다면 삭제
+        if (this.user.avatar_url) {
+          const oldPath = this.user.avatar_url.split('avatars/')[1];
+          if (oldPath) {
+            await supabase.storage
+              .from('avatars')
+              .remove([oldPath]);
+          }
+        }
+    
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${this.user.email}/${Date.now()}.${fileExt}`;
+    
+        const { data, error } = await supabase.storage
+          .from('avatars')
+          .upload(fileName, file, {
+            upsert: true
+          });
+    
+        if (error) throw error;
+    
+        const { data: { publicUrl } } = supabase.storage
+          .from('avatars')
+          .getPublicUrl(fileName);
+    
+        // 사용자 메타데이터 업데이트
+        await supabase.auth.updateUser({
+          data: { avatar_url: publicUrl }
+        });
+    
+        return publicUrl;
+      } catch (error) {
+        console.error('프로필 업로드 실패(1MB 이하 가능)', error);
+        throw error;
+      }
+    },
+    
+
+    async getProfileImage() {
+      try {
+        if (!this.user?.avatar_url) return null;
+        return this.user.avatar_url;
+      } catch (error) {
+        console.error('프로필 이미지 가져오기 오류:', error);
+        return null;
+      }
+    },
+
     // 세션 체크
     async checkSession() {
       const { data: { session } } = await supabase.auth.getSession();
