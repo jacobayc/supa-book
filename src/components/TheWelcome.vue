@@ -13,13 +13,18 @@
         @keyup.enter="handleSearch"
         style="max-width:100px;"
       />
-      <button style="margin-right:10px;" class="search-button" @click="handleSearch">Search</button>
+      <button style="margin-right:10px;" class="search-button" @click="handleSearch">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8" />
+          <line x1="21" y1="21" x2="16.65" y2="16.65" />
+        </svg>
+      </button>
       <button class="write-button"  @click="showModal = !showModal">Write</button>
       <button class="edit-button"  @click="toggleEditMode">Edit</button>
       <button class="delete-button" @click="toggleDeleteMode">Delete</button>
     </div>
-    <ul v-if="filteredBooks.length" class="book-list">
-      <li v-for="(book, index) in filteredBooks" :key="book.id" :class="{ 'new-book': index === 0 }" class="book-item" @click="handleBookClick(book)">
+    <ul v-if="paginatedBooks.length" class="book-list">
+      <li v-for="(book, index) in paginatedBooks" :key="book.id" :class="{ 'new-book': index === 0 }" class="book-item" @click="handleBookClick(book)">
         <p class="book-index">{{ bookStore.books.length - 1 - index }}</p>
         <p class="book-title">
           <mark v-for="(part, index) in highlightParts(book.title)" 
@@ -43,6 +48,25 @@
       </li>
     </ul>
     <p class="empty" v-else-if="!bookStore.loading && !bookStore.error">No books found.</p>
+
+    <!-- 페이지네이션 컨트롤 추가 -->
+    <div class="pagination" v-if="totalPages > 1">
+      <button 
+        :disabled="currentPage === 1"
+        @click="prevPage"
+        class="page-button"
+      >이전</button>
+      
+      <span class="page-info">{{ currentPage }} / {{ totalPages }}</span>
+      
+      <button 
+        :disabled="currentPage === totalPages"
+        @click="nextPage"
+        class="page-button"
+      >다음</button>
+    </div>
+    
+    
     <modal  
      :open="showModal"
      :initialTitle="currentBook?.title"
@@ -83,8 +107,10 @@ const showModal = ref(false);
 const showTrashBin = ref(false);
 const isEditMode = ref(false);
 const currentBook = ref(null);
-const searchText = ref('');
+const searchText = ref(''); // 검색 입력 값
 const searchResult = ref('');
+const currentPage = ref(1); // 페이지네이션 관련 상태 추가
+const itemsPerPage = 10;
 
 const handleSearch = () => {
   searchResult.value = searchText.value;
@@ -107,6 +133,37 @@ onUnmounted(() => {
   // 이벤트 리스너 제거
   emitter.off('session-updated')
 })
+
+// 페이지네이션된 도서 목록을 계산하는 computed 속성
+const paginatedBooks = computed(() => {
+  const startIndex = (currentPage.value - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  return filteredBooks.value.slice(startIndex, endIndex);
+});
+
+// 전체 페이지 수 계산
+const totalPages = computed(() => {
+  return Math.ceil(filteredBooks.value.length / itemsPerPage);
+});
+
+// 페이징 이동 메서드
+const changePage = (page) => {
+  if (page >= 1 && page <= totalPages.value) {
+    currentPage.value = page;
+  }
+};
+
+const nextPage = () => {
+  if (currentPage.value < totalPages.value) {
+    currentPage.value++;
+  }
+};
+
+const prevPage = () => {
+  if (currentPage.value > 1) {
+    currentPage.value--;
+  }
+};
 
 const adminUserCheck = computed (()=> {
   return (
@@ -276,6 +333,7 @@ const toggleDeleteMode = () => {
 }
 
 .book-list { /* New class for the list */
+  min-height: 520px;
   width: 100%;
   max-width: 1200px;
   list-style: none; /* Remove default bullet points */
@@ -407,6 +465,36 @@ mark.highlight {
   color: rgb(209, 137, 4);
 }
 
+.pagination {
+  position: absolute;
+  left: 50%;
+  transform:translateX(-50%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+  gap: 10px;
+}
+
+.page-button {
+  padding: 5px 15px;
+  border: none;
+  border-radius: 5px;
+  background-color: #4CAF50;
+  color: white;
+  cursor: pointer;
+}
+
+.page-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.page-info {
+  color: #fff;
+  font-size: 14px;
+}
+
 .empty {
   position: fixed;
   top: 50%;
@@ -417,7 +505,7 @@ mark.highlight {
 .tools {
   width: 100%;
   max-width: 1200px;
-  margin: 0 auto;
+  margin: 0 auto 20px;;
   text-align: right;
   /* display: flex; */
   /* position: absolute; */
@@ -440,12 +528,17 @@ mark.highlight {
 .search-button {
   background-color: #666;
   margin-right: 10px;
+  width: 24px;
+  min-width: 34px !important; 
+  transform:translateY(9px);
 }
 
 .search-input {
   font-size: 12px;
   padding: 5px 10px;
   margin-right: 2px;
+  background: #222;
+  color: #2affcc;
   border: 1px solid #ddd;
   border-radius: 5px;
   height: 24px;

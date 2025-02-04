@@ -23,6 +23,7 @@ import { useRouter, useRoute } from 'vue-router';
 import { useBookStore } from '../stores/book';
 import Highlighter from 'vue-highlight-words'
 
+
 const route = useRoute()
 const router = useRouter();
 const bookStore = useBookStore();
