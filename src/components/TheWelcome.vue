@@ -30,7 +30,7 @@
       <button class="delete-button" @click="toggleDeleteMode">삭제</button>
     </div>
     <ul v-if="paginatedBooks.length" class="book-list">
-      <li v-for="(book, index) in paginatedBooks" :key="book.id" :class="{ 'new-book': index === 0 }" class="book-item" @click="handleBookClick(book)">
+      <li v-for="(book, index) in paginatedBooks" :key="book.id" :class="{ 'new-book': index == 0 && currentPage == 1 }" class="book-item" @click="handleBookClick(book)">
         <p class="book-index">{{ (totalPages - currentPage) * itemsPerPage + (paginatedBooks.length - 1 - index) }} </p>
         <p class="book-title">
           <mark v-for="(part, index) in highlightParts(book.title)" 
@@ -42,7 +42,7 @@
         <p class="book-email">{{ book.email == user?.email ? `${book.nickname} (내 글)` : book.name }}</p>
         <p class="book-count">{{ book.count_num }}</p>
         <p class="book-created-at">{{ book.formattedCreatedAt ? book.formattedCreatedAt : '방금전' }}</p>
-        <b class="new-badge" v-show = "index == 0">
+        <b class="new-badge" v-show="currentPage === 1 && index === 0">
           <Vue3Lottie 
             class="lottie"
             :animationData="animationJSON"
@@ -407,7 +407,7 @@ const toggleDeleteMode = () => {
 }
 
 .new-book {
-  outline: 2px solid pink;
+  outline: 1px solid rgb(169, 220, 250);
   position: relative;
 }
 
@@ -534,6 +534,7 @@ mark.highlight {
 }
 
 .tools button {
+  font-size: 11px;
   height: 24px;
   margin: 0 3px;
   min-width: 46px;

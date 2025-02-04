@@ -1,6 +1,6 @@
 <template>
   <div class="detailPage">
-    <button class="back-button" @click="goBack">Back</button>
+    <button class="back-button" @click="goBack">나가기</button>
     <!-- 조건부 렌더링 추가 -->
     <div v-if="book" class="contents">
       <h1>" {{ book.title }} "</h1>
@@ -75,6 +75,12 @@ const goBack = () => {
   box-sizing: border-box;
 }
 
+h1 {
+  text-align: center;
+  padding: 40px 0px;
+  color: salmon;
+}
+
 h3 {
   width: 100%;
   white-space: pre-wrap;
@@ -82,22 +88,18 @@ h3 {
   line-height: 1.5;
 }
 
-h1 {
-  text-align: center;
-  padding: 40px 0px;
-  color: salmon;
-}
 
 .back-button {
-  position: absolute; /* 절대 위치 설정 */
+  position: fixed; /* 절대 위치 설정 */
   top: 15px;
   right: 10px;
-  padding: 4px 8px;
+  padding: 6px 10px;
   /* background-color: #42b983; Vue green */
   color: black;
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  font-size: 11px;
   transition: background-color 0.3s ease; /* Hover 효과를 부드럽게 */
 }
 
@@ -107,13 +109,14 @@ h1 {
 
 @media (max-width: 1199px) { /* 1200px 미만 */
   h1 {
-    font-size: 20px;
+    font-size: 16px;
+    font-weight: 700;
     overflow: hidden; /* 내용이 넘칠 경우 숨김 */
     text-overflow: ellipsis; /* 말줄임표(...) 표시 */
     white-space: nowrap; /* 줄바꿈 방지 */
   }
   .contents {
-    font-size: 13px;
+    font-size: 12px;
   }
 }
 </style>
