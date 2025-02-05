@@ -204,12 +204,45 @@ const saveBook = () => {
   height: 100%;
   overflow-y: auto;
   padding: 5px;
+  white-space: pre-wrap;
+  word-break: break-all;
+  line-height: 1.2;
 }
 
 .preview-content > h2 {
   font-size: 16px;
   color: salmon;
   margin-bottom: 30px;
+}
+
+/* 🟨 마크다운 스타일 추가 🟨 */
+.preview-content :deep(h1),
+.preview-content :deep(h2),
+.preview-content :deep(h3),
+.preview-content :deep(h4),
+.preview-content :deep(h5),
+.preview-content :deep(h6) {
+  margin-bottom: 10px;
+  font-weight: 600;
+  line-height: 1;
+}
+.preview-content :deep(li) {
+  line-height:1.2;
+}
+.preview-content :deep(code) {
+  padding: 0.2em 0.4em;
+  background-color: rgba(27,31,35,0.05);
+  border-radius: 3px;
+}
+.preview-content :deep(pre) {
+  padding: 16px;
+  background-color: #f6f8fa;
+  border-radius: 3px;
+}
+.preview-content :deep(blockquote) {
+  padding: 0 1em;
+  color: #6a737d;
+  border-left: 0.25em solid #dfe2e5;
 }
 
 .modal-container input,

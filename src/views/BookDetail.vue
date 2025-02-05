@@ -125,23 +125,19 @@ h1 {
   font-weight: 600;
   line-height: 1;
 }
-
 .markdown-content :deep(li) {
-  line-height:.1;
+  line-height:1.2;
 }
-
 .markdown-content :deep(code) {
   padding: 0.2em 0.4em;
   background-color: rgba(27,31,35,0.05);
   border-radius: 3px;
 }
-
 .markdown-content :deep(pre) {
   padding: 16px;
   background-color: #f6f8fa;
   border-radius: 3px;
 }
-
 .markdown-content :deep(blockquote) {
   padding: 0 1em;
   color: #6a737d;
