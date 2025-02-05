@@ -126,6 +126,7 @@ export const useBookStore = defineStore('book', {
         this.loading = true
         this.error = null
         try {
+          // books 테이블 업데이트
           const { data, error } = await supabase
             .from('books')
             .update({ 
@@ -138,6 +139,17 @@ export const useBookStore = defineStore('book', {
           if (error) {
             throw error
           }
+
+           // logs 테이블 업데이트
+            const { error: logError } = await supabase
+            .from('logs')
+            .update({ 
+              title: updatedBook.title, 
+              text: updatedBook.text 
+            })
+            .eq('id', updatedBook.id);
+
+          if (logError) throw logError;
 
           // 로컬 상태 업데이트
           const index = this.books.findIndex(book => book.id === updatedBook.id)
