@@ -197,6 +197,7 @@ const saveBook = () => {
   border: 1px solid #ddd;
   border-radius: 5px;
   overflow-y: auto;
+  box-shadow: 5px 5px 10px rgba(150,150,150.2);
 }
 
 .preview-content {
@@ -250,7 +251,7 @@ const saveBook = () => {
   }
 
   .modal-container textarea {
-    height: calc(100% - 100px);
+    height: calc(100% - 110px);
   }
 }
 </style>
