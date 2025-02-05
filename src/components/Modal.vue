@@ -1,18 +1,36 @@
 
 
 <template>
-  <div v-if="open" class="modal">
-    <strong style="color: hotpink;">{{isEditMode ? 'Edit mode' : ''}}</strong>
-    <input type="text" v-model="title" :placeholder="initialTitle || title"/>
-    <textarea v-model="text" :placeholder="initialText || text"/>
-    <button @click="saveBook">{{isEditMode ? 'save' : 'save' }}</button>
-    <button @click="closeModal">close</button>
+  <div v-if="open" class="modal-container">
+    <div class="editor-section">
+      <strong style="color: lemonchiffon; font-size: 12px;">{{isEditMode ? '편집 중' : '작성 중'}}</strong>
+      <input type="text" v-model="title" :placeholder="initialTitle || title"/>
+      <textarea 
+        v-model="text" 
+        :placeholder="initialText || text"
+        @scroll="syncScroll"
+        ref="editorTextarea"
+      />
+      <div class="button-group">
+        <button @click="saveBook">{{isEditMode ? '수정' : '저장' }}</button>
+        <button @click="closeModal">취소</button>
+      </div>
+    </div>
+    
+    <div class="preview-section">
+      <div class="preview-content" ref="previewContent">
+        <h2 v-if="title">{{ title }}</h2>
+        <div v-html="compiledContent"></div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup>
 
-import { ref, watch } from 'vue';
+import { ref, watch, computed } from 'vue';
+import { marked } from 'marked';
+import DOMPurify from 'dompurify';
 
 
 const props = defineProps({
@@ -34,16 +52,84 @@ const props = defineProps({
   }
 });
 
+// marked 설정 추가
+marked.setOptions({
+  breaks: true,      // 줄바꿈 허용
+  gfm: true,         // GitHub Flavored Markdown 활성화
+  headerIds: false,  // header에 자동 ID 생성 비활성화
+  mangle: false      // 링크나 이메일 주소 수정 비활성화
+});
+
+// marked 색상 설정
+marked.use({
+  renderer: {
+    text(text) {
+      if (typeof text.text !== 'string') return text.text;
+      
+      try {
+        // 색상과 배경색을 하나의 정규식으로 처리
+        return text.text.replace(/(c|bc):(\w+)\s+(.*?)\./g, (match, type, color, content) => {
+          if (type === 'c') {
+            return `<span style="color:${color}">${content}</span>.`;
+          } else {
+            return `<span style="background-color:${color}">${content}</span>.`;
+          }
+        });
+      } catch (error) {
+        console.error('마크다운 변환 오류:', error);
+        return text.text;
+      }
+    }
+  }
+});
+
+// style 속성 허용
+DOMPurify.setConfig({
+  ALLOWED_TAGS: [
+    'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+    'p', 'br', 'hr',
+    'strong', 'em', 'del',
+    'ul', 'ol', 'li',
+    'blockquote', 'code', 'pre',
+    'a', 'span'
+  ],
+  ALLOWED_ATTR: ['href', 'class', 'style']
+});
+
+
+
+
 const title = ref('');
 const text = ref('');
+const editorTextarea = ref(null);// 스크롤 동기화
+const previewContent = ref(null);
+
+// 마크다운 변환된 내용을 계산 computed
+const compiledContent = computed(() => {
+  if (!text.value) return '';
+  return DOMPurify.sanitize(marked(text.value));
+});
+
+
+const syncScroll = (e) => {
+  if (!previewContent.value) return;
+  
+  const textarea = e.target;
+  const scrollPercentage = textarea.scrollTop / 
+    (textarea.scrollHeight - textarea.clientHeight);
+  
+  const preview = previewContent.value;
+  preview.scrollTop = scrollPercentage * 
+    (preview.scrollHeight - preview.clientHeight);
+};
 
 // 초기값 설정
 watch(() => props.open, (newValue) => {
   if (newValue) {
-    title.value = props.initialTitle
-    text.value = props.initialText
+    title.value = props.initialTitle || '';
+    text.value = props.initialText || '';
   }
-})
+});
 
 
 const emit = defineEmits(['close', 'save']);
@@ -72,67 +158,99 @@ const saveBook = () => {
 };
 </script>
 
+
 <style scoped>
-.modal {
-  width: 90vw !important;
-  position: fixed; /* Make modal fixed on screen */
+.modal-container {
+  width: 90vw;
+  height: 90vh;
+  position: fixed;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%); /* Center the modal */
-  background-color: #fff; /* White background */
-  border: 1px solid #ddd; /* Light border */
-  border-radius: 5px; /* Rounded corners */
+  transform: translate(-50%, -50%);
+  display: flex;
+  gap: 20px;
   padding: 20px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-  width: 400px; /* Set modal width */
-
-  /* Pink and purple gradient */
-  background-image: linear-gradient(to right, #f7cac9, #e5b7b5);
+  background-color: #222;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-.modal input,
-.modal textarea,
-.modal button {
-  /* resize: none; */
+.editor-section, .preview-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.editor-section {
+  position: relative;
+  background-image: linear-gradient(to right, #3a3a3b, #282c2c);
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.preview-section {
+  font-size: 14px;
+  background-color: #222;
+  color: #fff;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  overflow-y: auto;
+}
+
+.preview-content {
+  height: 100%;
+  overflow-y: auto;
+  padding: 20px;
+}
+
+.modal-container input,
+.modal-container textarea {
+  width: 100%;
   padding: 10px;
   margin-bottom: 10px;
   border: 1px solid #ddd;
+  color: #fff;
   border-radius: 3px;
-  width: 100%; /* Make inputs and buttons full width */
+  background-color: #222;
 }
-.modal textarea {
-  height: 30vw;
+
+.modal-container textarea {
+  height: calc(100% - 120px);
+  resize: none;
+}
+
+.button-group {
+  width: 90%;
+  left: 50%;
+  transform: translateX(-50%);
+  position: absolute;
+  bottom: 10px;
+  display: flex;
+  gap: 20px;
+}
+
+.button-group button {
+  flex:1;
+  padding: 10px;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
 }
 
 @media (max-width: 1199px) {
-  .modal {
-  position: fixed; /* Make modal fixed on screen */
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%); /* Center the modal */
-  background-color: #fff; /* White background */
-  border: 1px solid #ddd; /* Light border */
-  border-radius: 5px; /* Rounded corners */
-  padding: 20px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-  width: 400px; /* Set modal width */
+  .modal-container {
+    flex-direction: column;
+    height: 80vh;
+  }
 
-  /* Pink and purple gradient */
-  background-image: linear-gradient(to right, #f7cac9, #e5b7b5);
-}
+  .editor-section, .preview-section {
+    height: 50%;
+  }
 
-.modal input,
-.modal textarea,
-.modal button {
-  /* resize: none; */
-  padding: 10px;
-  margin-bottom: 10px;
-  border: 1px solid #ddd;
-  border-radius: 3px;
-  width: 100%; /* Make inputs and buttons full width */
-}
-.modal textarea {
-  height: 50vw;
-}
+  .modal-container textarea {
+    height: calc(100% - 100px);
+  }
 }
 </style>

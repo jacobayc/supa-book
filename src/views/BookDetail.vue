@@ -4,14 +4,16 @@
     <!-- 조건부 렌더링 추가 -->
     <div v-if="book" class="contents">
       <h1>" {{ book.title }} "</h1>
-      <h3>
-        <Highlighter
+      <div class="markdown-content">
+        <div v-html="markdownContent"></div>
+        <!-- <Highlighter
           :searchWords="searchTermArray"
-          :textToHighlight="book.text"
+          :textToHighlight="compiledContent"
           highlightClassName="highlights"
           :highlightStyle="{ color: '#000 !important', background: 'rgb(204, 204, 153)' }"
-        />
-      </h3>
+          :autoEscape="false"
+        /> -->
+      </div>
     </div>
     <div v-else>Loading...</div>
   </div>
@@ -22,6 +24,8 @@ import { defineProps, onMounted, ref, computed } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useBookStore } from '../stores/book';
 import Highlighter from 'vue-highlight-words'
+import { marked } from 'marked';
+import DOMPurify from 'dompurify';
 
 
 const route = useRoute()
@@ -29,29 +33,30 @@ const router = useRouter();
 const bookStore = useBookStore();
 const book = ref(null);
 const searchTerm = ref('');
+const markdownContent = ref('');
 
-// props로 쿼리 파라미터 직접 받기
-// const props = defineProps({
-//   id: {
-//     type: String,
-//     default: null
-//   }
-// })
-
-onMounted(async () => {
-
-  // 현재 페이지 조회
-  const bookId = route.params?.id
-
-   // 쿼리 파라미터에서 검색어 추출 하이라이트 처리 위함
-  searchTerm.value = route.query?.search || '';
-  // 현 페이지에 맞는 책 조회
-  await bookStore.fetchBookById(bookId);
-  book.value = bookStore.currentBook
+// marked 설정
+marked.setOptions({
+  breaks: true,
+  gfm: true,
+  headerIds: false,
+  mangle: false
 });
 
-const searchTermArray = computed(() => {
-  return searchTerm.value ? [searchTerm.value] : [];
+onMounted(async () => {
+  // 현재 페이지 조회
+  const bookId = route.params?.id
+  searchTerm.value = route.query?.search || '';
+
+  // 현 페이지에 맞는 책 조회
+  await bookStore.fetchBookById(bookId);
+  console.log(bookStore.currentBook)
+  book.value = bookStore.currentBook
+
+  // book.value.text가 있을 때 마크다운 처리
+  if (book.value?.text) {
+    markdownContent.value = DOMPurify.sanitize(marked(book.value.text));
+  }
 });
 
 
@@ -63,6 +68,8 @@ const goBack = () => {
 <style scoped>
 .detailPage {
   width: 100%;
+  height: 100vh;
+  background: #222;
   /* height: 1000px; */
   padding-bottom: 100px;
 }
@@ -81,7 +88,7 @@ h1 {
   color: salmon;
 }
 
-h3 {
+.markdown-content {
   width: 100%;
   white-space: pre-wrap;
   word-break: break-all;
@@ -107,16 +114,55 @@ h3 {
   background-color: #35936a;
 }
 
+/* 🟨 마크다운 스타일 추가 🟨 */
+.markdown-content :deep(h1),
+.markdown-content :deep(h2),
+.markdown-content :deep(h3),
+.markdown-content :deep(h4),
+.markdown-content :deep(h5),
+.markdown-content :deep(h6) {
+  margin-bottom: 10px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.markdown-content :deep(li) {
+  line-height:.1;
+}
+
+.markdown-content :deep(code) {
+  padding: 0.2em 0.4em;
+  background-color: rgba(27,31,35,0.05);
+  border-radius: 3px;
+}
+
+.markdown-content :deep(pre) {
+  padding: 16px;
+  background-color: #f6f8fa;
+  border-radius: 3px;
+}
+
+.markdown-content :deep(blockquote) {
+  padding: 0 1em;
+  color: #6a737d;
+  border-left: 0.25em solid #dfe2e5;
+}
+
+.highlights {
+  background-color: rgb(204, 204, 153) !important;
+  color: #000 !important;
+}
+
 @media (max-width: 1199px) { /* 1200px 미만 */
   h1 {
-    font-size: 16px;
+    font-size: 20px;
     font-weight: 700;
     overflow: hidden; /* 내용이 넘칠 경우 숨김 */
     text-overflow: ellipsis; /* 말줄임표(...) 표시 */
     white-space: nowrap; /* 줄바꿈 방지 */
   }
   .contents {
-    font-size: 12px;
+    font-size: 14px;
   }
 }
 </style>

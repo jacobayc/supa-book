@@ -87,7 +87,6 @@ const handleImageUpload = async (event) => {
 
   try {
     const url = await authStore.uploadProfileImage(file);
-    console.log(url)
     profileImageUrl.value = url;
     alert('프로필 이미지가 업데이트되었습니다.');
     emitter.emit('avatar-updated')

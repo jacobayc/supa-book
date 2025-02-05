@@ -11,23 +11,26 @@
     </div>
     <div v-if="bookStore.error">Error: {{ bookStore.error.message }}</div>
     <div class="tools">
-      <input 
-        type="text" 
-        v-model="searchText" 
-        placeholder="검색..."
-        class="search-input"
-        @keyup.enter="handleSearch"
-        style="max-width:100px;"
-      />
-      <button style="margin-right:10px;" class="search-button" @click="handleSearch">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="11" cy="11" r="8" />
-          <line x1="21" y1="21" x2="16.65" y2="16.65" />
-        </svg>
-      </button>
-      <button class="write-button"  @click="showModal = !showModal">글쓰기</button>
-      <button class="edit-button"  @click="toggleEditMode">수정</button>
-      <button class="delete-button" @click="toggleDeleteMode">삭제</button>
+      <div class="search-area">
+        <input 
+          type="text" 
+          v-model="searchText" 
+          placeholder="검색..."
+          class="search-input"
+          @keyup.enter="handleSearch"
+        />
+        <button style="margin-right:10px;" class="search-button" @click="handleSearch">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+        </button>
+      </div>
+      <div class="button-area">
+        <button class="write-button"  @click="showModal = !showModal">글쓰기</button>
+        <button class="edit-button"  @click="toggleEditMode">수정</button>
+        <button class="delete-button" @click="toggleDeleteMode">삭제</button>
+      </div>
     </div>
     <ul v-if="paginatedBooks.length" class="book-list">
       <li v-for="(book, index) in paginatedBooks" :key="book.id" :class="{ 'new-book': index == 0 && currentPage == 1 }" class="book-item" @click="handleBookClick(book)">
@@ -79,7 +82,7 @@
      :initialText="currentBook?.text"
      :isEditMode="!!currentBook"
      @save="saveBookToStore" 
-     @close="showModal = false"
+     @close="closeModal"
      >
     </modal>
     <div class="loading" v-if="bookStore.loading">
@@ -251,6 +254,12 @@ const handleBookClick = async (book) => {
     }
   });
 };
+
+const closeModal = () => {
+  showModal.value = false
+  currentBook.value = null
+  isEditMode.value = false
+}
 
 const saveBookToStore  = async (bookData, isEdit) => {
   // 수정모드
@@ -472,6 +481,7 @@ mark.highlight {
   overflow: hidden; /* 내용이 넘칠 경우 숨김 */
   text-overflow: ellipsis; /* 말줄임표(...) 표시 */
   white-space: nowrap; /* 줄바꿈 방지 */
+  color: rgb(199, 212, 247);
 }
 
 .book-created-at {
@@ -481,7 +491,7 @@ mark.highlight {
   overflow: hidden; /* 내용이 넘칠 경우 숨김 */
   text-overflow: ellipsis; /* 말줄임표(...) 표시 */
   white-space: nowrap; /* 줄바꿈 방지 */
-  color: rgb(209, 137, 4);
+  color: rgb(155, 154, 153);
 }
 
 .pagination {
@@ -499,13 +509,13 @@ mark.highlight {
   padding: 5px 15px;
   border: none;
   border-radius: 5px;
-  background-color: #4CAF50;
+  background-color: #51a354;
   color: white;
   cursor: pointer;
 }
 
 .page-button:disabled {
-  background-color: #cccccc;
+  background-color: #818181;
   cursor: not-allowed;
 }
 
@@ -522,15 +532,42 @@ mark.highlight {
 }
 
 .tools {
+  display: flex; 
   width: 100%;
   max-width: 1200px;
-  margin: 0 auto 20px;;
+  margin: 20px auto 10px;
   text-align: right;
-  /* display: flex; */
-  /* position: absolute; */
-  /* top: 58px; */
-  /* right: 10px; */
-  /* justify-content: space-between; */
+}
+
+.search-area {
+  text-align: left;
+  width: 50%;
+}
+
+.button-area {
+  width: 50%;
+}
+
+.search-button {
+  display: inline-block;
+  background-color: #b39f9f00;
+  margin-right: 10px;
+  width: 24px;
+  min-width: 34px !important; 
+}
+
+.search-input {
+  max-width: 200px;
+  display: inline-block;
+  width: 90% !important;
+  height: 70%;
+  transform:translateY(-8px);
+  font-size: 12px;
+  padding: 5px 10px;
+  background: #222;
+  color: #2affcc;
+  outline: 1px solid #ddd;
+  border-radius: 5px;
 }
 
 .tools button {
@@ -545,35 +582,17 @@ mark.highlight {
   cursor: pointer;
 }
 
-.search-button {
-  background-color: #666;
-  margin-right: 10px;
-  width: 24px;
-  min-width: 34px !important; 
-  transform:translateY(9px);
-}
-
-.search-input {
-  font-size: 12px;
-  padding: 5px 10px;
-  margin-right: 2px;
-  background: #222;
-  color: #2affcc;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  height: 24px;
-}
 
 .write-button {
-  background-color: #4CAF50; /* Green for "Write" */
+  background-color: #5a8d5b; /* Green for "Write" */
 }
 
 .edit-button {
-  background-color: #f39c9c; /* Green for "Write" */
+  background-color: #e77171; /* Green for "Write" */
 }
 
 .delete-button {
-  background-color: #f44336; /* Red for "Delete" */
+  background-color: #77423f; /* Red for "Delete" */
 }
 
 button:hover {
@@ -595,6 +614,10 @@ button:hover {
 @media (max-width: 1199px) { /* 1200px 미만 */
   .tools {
     width: 90%;
+  }
+
+  .search-input {
+    max-width: 130px;
   }
   
   .book-item {
