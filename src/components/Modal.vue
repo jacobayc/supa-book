@@ -203,7 +203,13 @@ const saveBook = () => {
 .preview-content {
   height: 100%;
   overflow-y: auto;
-  padding: 20px;
+  padding: 5px;
+}
+
+.preview-content > h2 {
+  font-size: 16px;
+  color: salmon;
+  margin-bottom: 30px;
 }
 
 .modal-container input,
