@@ -70,9 +70,9 @@ marked.use({
         // 색상과 배경색을 하나의 정규식으로 처리
         return text.text.replace(/(c|bc):(\w+)\s+(.*?)\./g, (match, type, color, content) => {
           if (type === 'c') {
-            return `<span style="color:${color}">${content}</span>.`;
+            return `<span style="color:${color}">${content}</span>`;
           } else {
-            return `<span style="background-color:${color}">${content}</span>.`;
+            return `<span style="background-color:${color}">${content}</span>`;
           }
         });
       } catch (error) {
