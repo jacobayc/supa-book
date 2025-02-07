@@ -26,12 +26,12 @@
         <div class="modal-header">
           <h2>프로필 정보</h2>
           <!-- 프로필 이미지 섹션 추가 -->
-          <div class="profile-image-section">
+          <div class="profile-image-section"  @click="triggerFileInput">
             <img 
-              :src="profileImageUrl || '/icons/pen.png'" 
-              alt="Profile" 
+              :src="profileImageUrl" 
+              alt="no-icon" 
+              @error="handleError"
               class="profile-image"
-              @click="triggerFileInput"
             />
             <input 
               type="file"
@@ -69,13 +69,18 @@ import { useAuthStore } from '../stores/auth';
 import emitter from '../utils/eventBus'
 import { Vue3Lottie } from 'vue3-lottie'
 import animationJSON from '@/assets/logo.json'
+import avatar_default from '@/assets/avatar_default.png'
 
 const authStore = useAuthStore();
 const isMenuOpen = ref(false);
 const isChange = ref(false);
 const newNickname = ref('');
 const fileInput = ref(null);
-const profileImageUrl = ref(authStore.user?.avatar_url || '');
+const profileImageUrl = ref(authStore.user?.avatar_url);
+
+const handleError = (event) => {
+  event.target.src = avatar_default;
+}
 
 const triggerFileInput = () => {
   fileInput.value.click();
@@ -227,7 +232,7 @@ const logout = async () => {
 
 .modal-content {
   background-color: #222;
-  padding: 20px;
+  padding: 10px 40px;
   border-radius: 8px;
   width: 90%;
   max-width: 400px;
@@ -240,7 +245,7 @@ const logout = async () => {
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid #222;
-  padding-bottom: 10px;
+  padding-bottom: 40px;
 }
 
 .modal-header h2 {
@@ -262,14 +267,14 @@ const logout = async () => {
 }
 
 .profile-info p {
-  margin: 5px 0;
+  margin: 10px 0;
 }
 
 .nickname-section {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-top: 10px;
+  margin-top: -10px;
 }
 
 .nickname-section input {
@@ -295,14 +300,27 @@ const logout = async () => {
   cursor: pointer;
 }
 
-profile-image-section {
+.profile-image-section {
+  height: 90px;
+  transform:translate(-140px, 50px);
   margin: 10px 0;
   text-align: center;
 }
 
+.profile-image-section::after {
+  display: block;
+  content: "프로필 변경";
+  letter-spacing: -2px;
+  transform:translateY(-40px);
+  /* width: 100px; */
+  /* height: 30px; */
+  color: #059e7a;
+}
+
 .profile-image {
-  width: 80px;
-  height: 80px;
+  display:inline-block;
+  width: 90px;
+  height: 90px;
   border-radius: 100%;
   object-fit: cover;
   cursor: pointer;
