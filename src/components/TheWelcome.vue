@@ -40,7 +40,10 @@
     </div>
     <ul v-if="paginatedBooks.length" class="book-list">
       <li v-for="(book, index) in paginatedBooks" :key="book.id" :class="{ 'new-book': index == 0 && currentPage == 1 }" class="book-item" @click="handleBookClick(book)">
-        <p class="book-index">{{ (totalPages - currentPage) * itemsPerPage + (paginatedBooks.length - 1 - index) }} </p>
+        <p class="book-index">
+          <!-- {{ (totalPages - currentPage) * itemsPerPage + (paginatedBooks.length - 1 - index) }}  -->
+          {{ (currentPage - 1) * itemsPerPage + index + 1 }}
+        </p>
         <p class="book-title">
           <mark v-for="(part, index) in highlightParts(book.title)" 
                 :key="index"
