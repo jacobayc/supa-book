@@ -29,7 +29,13 @@
       <div class="button-area">
         <button class="write-button"  @click="showModal = !showModal">글쓰기</button>
         <button class="edit-button"  @click="toggleEditMode">수정</button>
-        <button class="delete-button" @click="toggleDeleteMode">삭제</button>
+        <button class="delete-button" @click="toggleDeleteMode">
+          <svg width="20" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M6 19C6 20.1046 6.89543 21 8 21H16C17.1046 21 18 20.1046 18 19V7H6V19Z" fill="#efefef"/>
+            <path d="M19 4H5V6H19V4Z" fill="#efefef"/>
+            <path d="M12 2C10.8954 2 10 2.89543 10 4H14C14 2.89543 13.1046 2 12 2Z" fill="#efefef"/>
+          </svg>
+        </button>
       </div>
     </div>
     <ul v-if="paginatedBooks.length" class="book-list">
@@ -592,6 +598,7 @@ mark.highlight {
 }
 
 .delete-button {
+  transform:translateY(9px);
   background-color: #77423f; /* Red for "Delete" */
 }
 
