@@ -136,7 +136,8 @@ export const useAuthStore = defineStore('auth', {
         const { error } = await supabase.auth.signOut();
         if (error) {
           console.error('로그아웃 오류:', error);
-          localStorage.removeItem('sb-bhkbhzhsvonyhgykonbs-auth-token');
+          const authKeys = Object.keys(localStorage).filter(key => key.includes("auth-token"));
+          localStorage.removeItem(authKeys);
           alert('다른 곳에서 로그아웃 되었습니다.');
           window.location.reload();
           return;
