@@ -20,7 +20,7 @@
 </template>
 
 <script setup>
-import { defineProps, onMounted, ref, computed } from 'vue';
+import { defineProps, onMounted, ref, computed, watch } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useBookStore } from '../stores/book';
 import Highlighter from 'vue-highlight-words'
@@ -43,6 +43,28 @@ marked.setOptions({
   mangle: false
 });
 
+marked.use({
+  renderer: {
+    text(text) {
+      if (typeof text.text !== 'string') return text.text;
+      
+      try {
+        // 색상과 배경색을 하나의 정규식으로 처리
+        return text.text.replace(/(c|bc):(\w+)\s+(.*?)\./g, (match, type, color, content) => {
+          if (type === 'c') {
+            return `<span style="color:${color}">${content}</span>`;
+          } else {
+            return `<span style="background-color:${color}">${content}</span>`;
+          }
+        });
+      } catch (error) {
+        console.error('마크다운 변환 오류:', error);
+        return text.text;
+      }
+    }
+  }
+});
+
 onMounted(async () => {
   // 현재 페이지 조회
   const bookId = route.params?.id
@@ -58,6 +80,17 @@ onMounted(async () => {
     markdownContent.value = DOMPurify.sanitize(marked(book.value.text));
   }
 });
+
+// book 데이터가 변경될 때마다 마크다운 처리를 수행하는 watch 추가
+watch(
+  () => book.value,
+  (newBook) => {
+    if (newBook?.text) {
+      markdownContent.value = DOMPurify.sanitize(marked(newBook.text));
+    }
+  },
+  { immediate: true }
+);
 
 
 const goBack = () => {
@@ -148,7 +181,7 @@ h1 {
 }
 .markdown-content :deep(blockquote) {
   padding: 0 1em;
-  color: #6a737d;
+  color: #adcae8;
   border-left: 0.25em solid #dfe2e5;
 }
 

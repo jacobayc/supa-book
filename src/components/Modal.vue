@@ -241,7 +241,7 @@ const saveBook = () => {
 }
 .preview-content :deep(blockquote) {
   padding: 0 1em;
-  color: #6a737d;
+  color: #adcae8;
   border-left: 0.25em solid #dfe2e5;
 }
 
