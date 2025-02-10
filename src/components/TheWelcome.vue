@@ -105,10 +105,10 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, computed } from 'vue';
+import { ref, onMounted, onUnmounted, computed, watch } from 'vue';
 import { useAuthStore } from '../stores/auth';
 import { useBookStore } from '../stores/book';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute} from 'vue-router';
 import { supabase } from '../utils/supabaseClient';
 import emitter from '../utils/eventBus'
 import Modal from '../components/Modal.vue'; 
@@ -117,6 +117,7 @@ import animationJSON from '@/assets/new.json'
 import loadingJSON from '@/assets/loading.json'
 
 const router = useRouter();
+const route = useRoute();
 const authStore = useAuthStore();
 const bookStore = useBookStore();
 const user = ref(null);
@@ -132,6 +133,15 @@ const itemsPerPage = 10;
 
 const handleSearch = () => {
   searchResult.value = searchText.value;
+
+  //검색시 쿼리 업데이트
+  router.push({
+    path: '/',
+    query: {
+      search: searchText.value,
+      page: '1' // 검색 시 1페이지로 이동
+    }
+  });
 };
 
 onMounted(async () => {
@@ -154,6 +164,22 @@ onUnmounted(() => {
   // 이벤트 리스너 제거
   emitter.off('session-updated')
 })
+
+// 상세페이지 뒤로가기 페이지 변경 감지
+watch(
+  () => route.query,
+  (newQuery) => {
+    // 페이지 정보 업데이트
+    currentPage.value = parseInt(newQuery?.page) || 1
+    
+    // 검색어 복원 (검색 버튼으로 검색할 때는 실행되지 않도록)
+    if (newQuery?.search && searchText.value !== newQuery.search) {
+      searchText.value = newQuery.search;
+      searchResult.value = newQuery.search;
+    }
+  },
+  { immediate: true, deep: true }
+)
 
 // 페이지네이션된 도서 목록을 계산하는 computed 속성
 const paginatedBooks = computed(() => {
@@ -259,7 +285,8 @@ const handleBookClick = async (book) => {
   router.push({
     path: `/list/${book.id}`,
     query: { 
-      search: searchResult.value // 검색어를 쿼리 파라미터로 전달
+      search: searchResult.value, // 검색어를 쿼리 파라미터로 전달
+      page: currentPage.value.toString()  // 현 페이지 정보 전달
     }
   });
 };

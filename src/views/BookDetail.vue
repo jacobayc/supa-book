@@ -61,7 +61,15 @@ onMounted(async () => {
 
 
 const goBack = () => {
-  router.push('/');
+  const previousPage = route.query?.page || '1';
+  const previousSearch = route.query?.search || '';
+  router.push({
+    path: '/',
+    query: { 
+      page: previousPage,
+      search: previousSearch 
+    }
+  });
 };
 </script>
 
