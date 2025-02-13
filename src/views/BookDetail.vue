@@ -166,8 +166,11 @@ h1 {
   font-weight: 600;
   line-height: 1;
 }
+.markdown-content :deep(ul) {
+  line-height:1;
+}
 .markdown-content :deep(li) {
-  line-height:1.2;
+  line-height:1.4;
 }
 .markdown-content :deep(code) {
   padding: 0.2em 0.4em;
