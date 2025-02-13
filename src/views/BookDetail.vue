@@ -72,7 +72,6 @@ onMounted(async () => {
 
   // 현 페이지에 맞는 책 조회
   await bookStore.fetchBookById(bookId);
-  console.log(bookStore.currentBook)
   book.value = bookStore.currentBook
 
   // book.value.text가 있을 때 마크다운 처리

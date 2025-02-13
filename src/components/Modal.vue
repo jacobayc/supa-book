@@ -12,8 +12,8 @@
         ref="editorTextarea"
       />
       <div class="button-group">
-        <button @click="saveBook">{{isEditMode ? '수정' : '저장' }}</button>
         <button @click="closeModal">취소</button>
+        <button @click="saveBook">{{isEditMode ? '수정' : '저장' }}</button>
       </div>
     </div>
     
