@@ -1,6 +1,7 @@
-import { supabaseNetlify as supabase } from './supabaseClientNetlify.js';
+import { supabase } from './supabaseClientNetlify.js';
 
 exports.handler = async (event) => {
+  console.log(supabase)
   try {
     console.log('Supabase fetchBooks API 호출 시도 (기존 supabaseClient 사용)...');
 
