@@ -5,6 +5,5 @@
 
 [functions]
   [functions.scheduled]
-    name = "keep-supabase-awake" # Netlify Function 파일 이름 (확장자 제외)
-    #schedule = "0 0 */4 * *"  # 매 4일 자정 (UTC 기준)
-    schedule = "*/5 * * * *" # 매 5분마다 실행 (UTC 기준)
+    name = "keep-supabase-awake"
+    schedule = "0 15 * * *"
