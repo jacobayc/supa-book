@@ -1,4 +1,4 @@
-import { supabase } from '../../src/utils/supabaseClient';
+import { supabaseNetlify as supabase } from './supabaseClientNetlify.js';
 
 exports.handler = async (event) => {
   try {
@@ -8,7 +8,7 @@ exports.handler = async (event) => {
       .from('books')
       .select('*')
       .limit(1); // 최소한의 데이터만 가져오도록 limit 설정
-
+    
     if (error) {
       console.error('Supabase fetchBooks API 호출 실패 (기존 supabaseClient):', error.message);
       return { statusCode: 500, body: `Supabase API call failed (existing supabaseClient): ${error.message}` };
